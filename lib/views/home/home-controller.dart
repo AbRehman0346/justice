@@ -17,12 +17,13 @@ class HomeController extends GetxController {
   List<CaseModel> cases = TempData.cases;
 
   List<CaseModel> get filteredCases {
+    var caseStatus = CaseStatus();
     var filtered = cases.where((CaseModel caseItem) {
       final matchesSearch = caseItem.title.toLowerCase().contains(searchQuery.toLowerCase());
-      // if(selectedFilter.value == filters[0]){
+      if(selectedFilter.value == filters[0]){
         // All Filter -> It shows all the active cases..
-        // return caseItem.status == CaseStatus().active;
-      // }
+        return caseItem.status == CaseStatus().active;
+      }
 
       bool matchesFilter = true;
 

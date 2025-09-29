@@ -1,5 +1,8 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:justice/res/utils/xutils.dart';
+import 'package:justice/temp_data/temp-data.dart';
 import '../../res/navigation_service/NavigatorService.dart';
 import '../create_case/link-case-controller.dart';
 import '../../views/edit_case/EditScreenControllerTags.dart';
@@ -12,21 +15,21 @@ class CaseEditController extends GetxController {
   var isSaving = false.obs;
 
   // Form fields
+  var id = ''.obs;
   var title = ''.obs;
   var court = ''.obs;
   var city = ''.obs;
   var proceedingsDetails = ''.obs;
   var caseStage = ''.obs;
   var caseType = ''.obs;
-  var courtName = ''.obs;
   var caseNumber = ''.obs;
-  var status = 'active'.obs;
-  var priority = 'medium'.obs;
+  var status = ''.obs;
+  var priority = ''.obs;
 
   // Date fields
   var prevDate = DateTime.now().obs;
   Rx<DateTime?> upcomingDate = DateTime.now().add(Duration(days: 30)).obs;
-  var dateStatus = 'scheduled'.obs;
+  var dateStatus = ''.obs;
   var dateNotes = ''.obs;
 
   // Linked cases and clients
@@ -37,31 +40,14 @@ class CaseEditController extends GetxController {
   var linkCaseController = Get.find<LinkCaseController>(tag: EditScreenControllerTags().linkCase);
 
   // Options
-  final List<String> statusOptions = ['active', 'disposed-off'];
-  final List<String> priorityOptions = ['high', 'medium', 'low'];
-  final List<String> caseStageOptions = [
-    'First Hearing',
-    'Evidence',
-    'Arguments',
-    'Judgment',
-    'Appeal',
-    'Mediation',
-    'Settlement',
-    'Trial'
-  ];
-  final List<String> caseTypeOptions = [
-    'Civil',
-    'Criminal',
-    'Family',
-    'Corporate',
-    'Property',
-    'Labor',
-    'Intellectual Property',
-    'Tax'
-  ];
-  final List<String> dateStatusOptions = ['scheduled', 'adjourned', 'attended', 'missed'];
+  final List<String> statusOptions = CaseStatus().all;
+  final List<String> priorityOptions = CasePriority().all;
+  final List<String> caseStageOptions = CaseStages().all;
+  final List<String> caseTypeOptions = CaseTypes().all;
+  final List<String> dateStatusOptions = DateStatus().all;
 
   void initializeWithCase(CaseModel caseModel) {
+    id.value = caseModel.id;
     title.value = caseModel.title;
     court.value = caseModel.court;
     city.value = caseModel.city;
@@ -114,19 +100,16 @@ class CaseEditController extends GetxController {
   }
 
   void navigateToAddContact() async {
-    final result = await Get.toNamed('/add-contact');
-    if (result != null && result is ContactModel) {
-      addClient(result);
-    }
+    Get.snackbar("Upcoming", "Functionality Coming Soon");
+    // final result = await Get.toNamed('/add-contact');
+    // if (result != null && result is ContactModel) {
+    //   addClient(result);
+    // }
   }
 
   bool validateForm() {
     if (title.value.isEmpty) {
       Get.snackbar('Error', 'Please enter case title', snackPosition: SnackPosition.BOTTOM);
-      return false;
-    }
-    if (courtName.value.isEmpty) {
-      Get.snackbar('Error', 'Please enter court name', snackPosition: SnackPosition.BOTTOM);
       return false;
     }
     if (caseStage.value.isEmpty) {
@@ -139,13 +122,13 @@ class CaseEditController extends GetxController {
   Future<void> saveCase() async {
     if (!validateForm()) return;
 
-    isSaving.value = true;
+    XUtils.showProgressBar("SAVING");
 
     // Simulate API call
     await Future.delayed(Duration(seconds: 2));
 
     final updatedCase = CaseModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // In real app, use existing ID
+      id: id.value,
       title: title.value,
       court: court.value,
       city: city.value,
@@ -167,7 +150,11 @@ class CaseEditController extends GetxController {
       linkedCaseId: linkCaseController.linkedCases.isEmpty ? null : linkCaseController.getLinkedCasesIds,
     );
 
-    isSaving.value = false;
+    int index = TempData.cases.indexWhere((value) => value.id == id.value);
+
+    TempData.cases[index] = updatedCase;
+
+    XUtils.hideProgressBar();
 
     Get.back(result: updatedCase);
     Get.snackbar(
@@ -199,7 +186,8 @@ class CaseEditController extends GetxController {
   }
 
   Future<void> goback() async {
-    await disposeControllers();
+    bool status = await disposeControllers();
+    log("Dispose Controllers ==============>   $status");
     NavigatorService.pop();
   }
 

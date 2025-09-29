@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import '../navigation_service/GlobalContext.dart';
 import '../xwidgets/xtext.dart';
@@ -44,5 +46,12 @@ class XUtils{
 
   static void hideProgressBar() {
     Navigator.pop(GlobalContext.getContext);
+  }
+
+  void printSuppressedError(Object e, String file){
+    log("-------------------------------Error----------------------------------------------");
+    log(e.toString());
+    log("File: $file");
+    log("----------------------------------------------------------------------------------");
   }
 }

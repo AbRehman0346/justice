@@ -59,6 +59,7 @@ class CaseStages{
   String appeal = 'Appeal';
   String mediation = 'Mediation';
   String settlement = 'Settlement';
+  String trail = 'trial';
 
   List<String> get all => [
     firstHearing,
@@ -68,6 +69,7 @@ class CaseStages{
     appeal,
     mediation,
     settlement,
+    trail,
   ];
 }
 
@@ -80,6 +82,7 @@ class CaseTypes{
   String property = 'Property';
   String labor = 'Labor';
   String intellectualProperty = 'Intellectual Property';
+  String tax = "tax";
 
   List<String> get all => [
     civil,
@@ -90,5 +93,6 @@ class CaseTypes{
     property,
     labor,
     intellectualProperty,
+    tax,
   ];
 }

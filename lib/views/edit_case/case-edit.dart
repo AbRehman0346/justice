@@ -28,9 +28,7 @@ class CaseEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _init();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initializeWithCase(kase);
-    });
+    controller.initializeWithCase(kase);
 
     return PopScope(
       canPop: false,
@@ -72,9 +70,7 @@ class CaseEditScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return Obx(() => controller.isLoading.value
-        ? Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
+    return SingleChildScrollView(
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
@@ -236,7 +232,7 @@ class CaseEditScreen extends StatelessWidget {
           SizedBox(height: 20),
         ],
       ),
-    ));
+    );
   }
 
   Widget _buildSection({required String title, required List<Widget> children}) {
@@ -328,7 +324,8 @@ class CaseEditScreen extends StatelessWidget {
             border: Border.all(color: Color(0xFFE2E8F0)),
           ),
           child: DropdownButtonFormField<String>(
-            value: value.isEmpty ? null : value,
+            initialValue: value.isEmpty ? null : value,
+            dropdownColor: AppColors.foreground2,
             items: options.map((String option) {
               return DropdownMenuItem<String>(
                 value: option,
@@ -554,6 +551,7 @@ class CaseEditScreen extends StatelessWidget {
 
   Widget _buildEmptyState(String message, IconData icon) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Color(0xFFF7FAFC),
