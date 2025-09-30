@@ -18,11 +18,12 @@ class HomeController extends GetxController {
 
   List<CaseModel> get filteredCases {
     var caseStatus = CaseStatus();
+    var dateTime = DateTime.now();
     var filtered = cases.where((CaseModel caseItem) {
       final matchesSearch = caseItem.title.toLowerCase().contains(searchQuery.toLowerCase());
       if(selectedFilter.value == filters[0]){
         // All Filter -> It shows all the active cases..
-        return caseItem.status == CaseStatus().active;
+        return caseItem.status == caseStatus.active;
       }
 
       bool matchesFilter = true;
@@ -30,9 +31,9 @@ class HomeController extends GetxController {
       if(selectedFilter.value == filters[1]){
         // Today Filter
         if(caseItem.date != null && caseItem.date!.upcomingDate != null){
-          matchesFilter = caseItem.date!.upcomingDate!.day == DateTime.now().day &&
-                caseItem.date!.upcomingDate!.month == DateTime.now().month &&
-                caseItem.date!.upcomingDate!.year == DateTime.now().year;
+          matchesFilter = caseItem.date!.upcomingDate!.day == dateTime.day &&
+                caseItem.date!.upcomingDate!.month == dateTime.month &&
+                caseItem.date!.upcomingDate!.year == dateTime.year;
         }else{
           matchesFilter = false;
         }
@@ -40,18 +41,18 @@ class HomeController extends GetxController {
       else if(selectedFilter.value == filters[2]){
         // Upcoming Filter
         if(caseItem.date != null && caseItem.date!.upcomingDate != null) {
-          matchesFilter = caseItem.date!.upcomingDate!.day <= DateTime.now().day &&
-              caseItem.date!.upcomingDate!.month <= DateTime.now().month &&
-              caseItem.date!.upcomingDate!.year <= DateTime.now().year;
+          matchesFilter = caseItem.date!.upcomingDate!.day <= dateTime.day &&
+              caseItem.date!.upcomingDate!.month <= dateTime.month &&
+              caseItem.date!.upcomingDate!.year <= dateTime.year;
         }else{
           matchesFilter = false;
         }
       } else if(selectedFilter.value == filters[3]){
         // Completed Filter
-        matchesFilter = caseItem.status == CaseStatus().disposeOff;
+        matchesFilter = caseItem.status == caseStatus.disposeOff;
       } else if(selectedFilter.value == filters[4]){
         // High Priority...
-        matchesFilter = caseItem.priority == CasePriority().high && caseItem.status == CaseStatus().active;
+        matchesFilter = caseItem.priority == CasePriority().high && caseItem.status == caseStatus.active;
       }
 
       return matchesSearch && matchesFilter;
