@@ -32,11 +32,11 @@ class PrevDateModel{
 }
 
 class DateStatus{
-  String missed = "Missed";
-  String adjourned = "Adjourned";
-  String attended = "attended";
-  String upcoming = "upcoming";
-  String notAssigned = "Not-Assigned";
+  final String missed = "missed";
+  final String adjourned = "adjourned";
+  final String attended = "attended";
+  final String upcoming = "upcoming";
+  final String notAssigned = "Not-Assigned";
 
 
   List<String> get all => [
@@ -44,6 +44,5 @@ class DateStatus{
     adjourned,
     attended,
     upcoming,
-    notAssigned,
   ];
 }

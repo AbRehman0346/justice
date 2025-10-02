@@ -4,16 +4,16 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
-import 'package:justice/views/create_case/controller-tags.dart';
-import '../../models/date-model.dart';
-import '../../res/colors/app-colors.dart';
-import '../../res/utils/xutils.dart';
-import '../../temp_data/temp-data.dart';
-import 'link-case-controller.dart';
-import '../../models/case-model.dart';
-import '../../models/contact-model.dart';
-import '../../res/xwidgets/xtextfield.dart';
-import 'add-case-controller.dart';
+import 'package:justice/views/case_screens/create_case/controller-tags.dart';
+import '../../../models/date-model.dart';
+import '../../../res/colors/app-colors.dart';
+import '../../../res/utils/xutils.dart';
+import '../../../temp_data/temp-data.dart';
+import '../create_case/link-case-controller.dart';
+import '../../../models/case-model.dart';
+import '../../../models/contact-model.dart';
+import '../../../res/xwidgets/xtextfield.dart';
+import '../create_case/add-case-controller.dart';
 
 class AddCaseScreen extends StatelessWidget {
   AddCaseScreen({super.key});
@@ -224,23 +224,7 @@ class AddCaseScreen extends StatelessWidget {
             ),
             trailing: Icon(Icons.arrow_drop_down),
             onTap: () async {
-              final pickedDate = await showDatePicker(
-                context: Get.context!,
-                initialDate: date ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                builder: (BuildContext context, Widget? child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.light(
-                        primary: Colors.black,
-                        surface: Colors.white,
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
+              final pickedDate = await XUtils().selectDate(date);
               if (pickedDate != null) {
                 onDateSelected(pickedDate);
               }

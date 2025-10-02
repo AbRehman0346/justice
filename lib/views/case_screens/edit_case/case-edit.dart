@@ -4,13 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:justice/res/colors/app-colors.dart';
 import 'package:justice/res/xwidgets/xtext.dart';
-import 'package:justice/views/edit_case/EditScreenControllerTags.dart';
-import '../../res/navigation_service/NavigatorService.dart';
+import 'package:justice/views/case_screens/edit_case/EditScreenControllerTags.dart';
 import '../create_case/link-case-controller.dart';
-import '../../models/case-model.dart';
-import '../../models/contact-model.dart';
-import '../../res/xwidgets/xtextfield.dart';
-import 'case-edit-controller.dart';
+import '../../../res/navigation_service/NavigatorService.dart';
+import '../../../models/case-model.dart';
+import '../../../models/contact-model.dart';
+import '../../../res/xwidgets/xtextfield.dart';
+import '../edit_case/case-edit-controller.dart';
 
 class CaseEditScreen extends StatelessWidget {
   late CaseEditController controller;
@@ -23,13 +23,12 @@ class CaseEditScreen extends StatelessWidget {
     var tags = EditScreenControllerTags();
     linkCaseController = Get.put(LinkCaseController(), tag: tags.linkCase);
     controller = Get.put(CaseEditController(), tag: tags.editCase);
+    controller.initializeWithCase(kase);
   }
 
   @override
   Widget build(BuildContext context) {
     _init();
-    controller.initializeWithCase(kase);
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -168,15 +167,13 @@ class CaseEditScreen extends StatelessWidget {
             children: [
               _buildDateField(
                 label: 'Previous Hearing Date',
-                date: controller.prevDate.value,
-                onDateSelected: (date) => controller.prevDate.value = date,
+                date: controller.date.value?.lastDate?.date,
                 enabled: false,
               ),
               SizedBox(height: 16),
               _buildDateField(
                 label: 'Upcoming Hearing Date',
-                date: controller.upcomingDate.value,
-                onDateSelected: (date) => controller.upcomingDate.value = date,
+                date: controller.date.value?.upcomingDate,
                 enabled: false,
               ),
               SizedBox(height: 16),
@@ -184,7 +181,15 @@ class CaseEditScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ElevatedButton(onPressed: null, child: XText("Edit Hearings")),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonBg,
+                      foregroundColor: AppColors.buttonForeground,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                      onPressed: controller.gotoEditHearings,
+                      child: XText("Edit Hearings"),
+                  ),
                 ],
               ),
               // _buildDropdown(
@@ -347,7 +352,6 @@ class CaseEditScreen extends StatelessWidget {
   Widget _buildDateField({
     required String label,
     DateTime? date,
-    required Function(DateTime) onDateSelected,
     bool enabled = true,
   }) {
     return Column(
@@ -370,22 +374,11 @@ class CaseEditScreen extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.calendar_today, color: Color(0xFF1A365D)),
             title: Text(
-              date == null ? "Date Not Selected" :
+              date == null ? "DATE NOT SET" :
               '${date.day}/${date.month}/${date.year}',
               style: GoogleFonts.poppins(),
             ),
             trailing: Icon(Icons.arrow_drop_down),
-            onTap: !enabled ? null : () async {
-              final pickedDate = await showDatePicker(
-                context: Get.context!,
-                initialDate: date,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-              if (pickedDate != null) {
-                onDateSelected(pickedDate);
-              }
-            },
           ),
         ),
       ],

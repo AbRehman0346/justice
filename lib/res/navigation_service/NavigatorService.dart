@@ -1,13 +1,15 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:justice/models/case-model.dart';
-import 'package:justice/models/contact-model.dart';
-import 'package:justice/res/navigation_service/routes.dart';
-import 'package:justice/views/case_details/case-details-screen.dart';
-import 'package:justice/views/contact/add-contact-screen.dart';
-import 'package:justice/views/create_case/add-case.dart';
-import 'package:justice/views/edit_case/case-edit.dart';
-import 'package:justice/views/signin/signin.dart';
+import '../../models/case-model.dart';
+import '../../models/contact-model.dart';
+import '../../models/date-model.dart';
+import '../../res/navigation_service/routes.dart';
+import '../../views/case_screens/case_details/case-details-screen.dart';
+import '../../views/contact/add-contact-screen.dart';
+import '../../views/case_screens/create_case/add-case.dart';
+import '../../views/case_screens/edit_case/case-edit.dart';
+import '../../views/case_screens/edit_case/edit_dates/edit-dates.dart';
+import '../../views/signin/signin.dart';
 import 'package:justice/views/signup/singup.dart';
 import 'GlobalContext.dart';
 
@@ -71,6 +73,15 @@ class NavigatorService{
     goto(_GotoModel(view, rmStack));
   }
 
+  Future<DateModel> gotoCaseEditDate({
+    bool rmStack = false,
+    DateModel? date,
+  }) async {
+    Widget view = DateEditScreen(dateModel: date);
+    DateModel newDate = await goto(_GotoModel(view, rmStack));
+    return newDate;
+  }
+
   Future<void> gotoCaseDetails({
     bool rmStack = false,
     required CaseModel kase,
@@ -80,7 +91,6 @@ class NavigatorService{
   }
 
   // Contact Screens
-
   Future<ContactModel?> gotoAddContact({
     bool rmStack = false,
   }) async {

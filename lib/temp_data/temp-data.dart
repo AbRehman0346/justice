@@ -103,7 +103,7 @@ class TempData{
         date: DateModel(
           prevDate: [PrevDateModel(date: DateTime(2024, 1, 15), dateStatus: status.attended)],
           upcomingDate: DateTime(2024, 2, 20),
-          dateStatus: 'attended',
+          dateStatus: status.attended,
           dateNotes: 'Both parties presented preliminary arguments. Next hearing scheduled for evidence submission.',
         ),
         clientIds: [
@@ -133,7 +133,7 @@ class TempData{
         date: DateModel(
           prevDate: [PrevDateModel(date: DateTime(2025, 9, 20), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 9, 27),
-          dateStatus: "upcoming",
+          dateStatus: status.upcoming,
         ),
         caseStage: 'First Hearing',
         caseType: 'Civil',
@@ -153,7 +153,7 @@ class TempData{
         date: DateModel(
           prevDate: [PrevDateModel(date: DateTime(2025, 9, 10), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 9, 28),
-          dateStatus: "upcoming",
+          dateStatus: status.upcoming,
         ),
         caseStage: 'Arguments',
         caseType: 'Corporate',
@@ -173,7 +173,7 @@ class TempData{
         date: DateModel(
           prevDate: [PrevDateModel(date: DateTime(2024, 1, 5), dateStatus: status.attended)],
           upcomingDate: DateTime(2024, 2, 25),
-          dateStatus: DateStatus().upcoming,
+          dateStatus: status.upcoming,
         ),
         caseStage: 'Evidence',
         caseType: 'Intellectual Property',
@@ -192,7 +192,7 @@ class TempData{
         date: DateModel(
           prevDate: [PrevDateModel(date: DateTime(2025, 1, 20), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 2, 18),
-          dateStatus: 'adjourned',
+          dateStatus: status.adjourned,
         ),
         caseStage: 'Mediation',
         caseType: 'Labor',

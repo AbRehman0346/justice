@@ -5,8 +5,8 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:justice/models/case-model.dart';
 import 'package:justice/models/date-model.dart';
 import 'package:justice/res/colors/app-colors.dart';
-import '../../models/contact-model.dart';
-import 'case-details-controller.dart';
+import '../../../models/contact-model.dart';
+import '../case_details/case-details-controller.dart';
 
 class CaseDetailsScreen extends StatelessWidget {
   final CaseModel kase;

@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
 import 'package:justice/temp_data/temp-data.dart';
-import 'package:justice/views/create_case/controller-tags.dart';
-import 'package:justice/views/create_case/link-case-controller.dart';
-import '../../models/case-model.dart';
-import '../../models/contact-model.dart';
-import '../../models/date-model.dart';
+import '../create_case/controller-tags.dart';
+import '../create_case/link-case-controller.dart';
+import '../../../models/case-model.dart';
+import '../../../models/contact-model.dart';
+import '../../../models/date-model.dart';
 
 class AddCaseController extends GetxController {
   var isLoading = false.obs;

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:justice/res/utils/xutils.dart';
 import 'package:justice/temp_data/temp-data.dart';
-import '../../res/navigation_service/NavigatorService.dart';
+import '../../../res/navigation_service/NavigatorService.dart';
 import '../create_case/link-case-controller.dart';
-import '../../views/edit_case/EditScreenControllerTags.dart';
-import '../../models/case-model.dart';
-import '../../models/contact-model.dart';
-import '../../models/date-model.dart';
+import 'EditScreenControllerTags.dart';
+import '../../../models/case-model.dart';
+import '../../../models/contact-model.dart';
+import '../../../models/date-model.dart';
 
 class CaseEditController extends GetxController {
   var isLoading = false.obs;
@@ -25,12 +25,7 @@ class CaseEditController extends GetxController {
   var caseNumber = ''.obs;
   var status = ''.obs;
   var priority = ''.obs;
-
-  // Date fields
-  var prevDate = DateTime.now().obs;
-  Rx<DateTime?> upcomingDate = DateTime.now().add(Duration(days: 30)).obs;
-  var dateStatus = ''.obs;
-  var dateNotes = ''.obs;
+  Rx<DateModel?> date = null.obs;
 
   // Linked cases and clients
   var selectedClients = <ContactModel>[].obs;
@@ -57,14 +52,7 @@ class CaseEditController extends GetxController {
     caseNumber.value = caseModel.caseNumber ?? '';
     status.value = caseModel.status;
     priority.value = caseModel.priority;
-
-    if (caseModel.date != null) {
-      prevDate.value = caseModel.date!.prevDate.last.date;
-      upcomingDate.value = caseModel.date!.upcomingDate;
-      dateStatus.value = caseModel.date!.dateStatus;
-      dateNotes.value = caseModel.date!.dateNotes ?? '';
-    }
-
+    date = caseModel.date.obs;
     linkCaseController.loadCaseFromLinkedIds(caseModel.linkedCaseId ?? []);
     selectedClients.value = caseModel.clientIds ?? [];
   }
@@ -83,10 +71,6 @@ class CaseEditController extends GetxController {
 
   void setCaseType(String type) {
     caseType.value = type;
-  }
-
-  void setDateStatus(String status) {
-    dateStatus.value = status;
   }
 
   void addClient(ContactModel client) {
@@ -138,13 +122,7 @@ class CaseEditController extends GetxController {
       caseStage: caseStage.value,
       caseType: caseType.value.isEmpty ? null : caseType.value,
       createdAt: DateTime.now(),
-      date: DateModel(
-        // TODO: update that prevDate property.
-        prevDate: [PrevDateModel(date: prevDate.value, dateStatus: DateStatus().attended)],
-        upcomingDate: upcomingDate.value,
-        dateStatus: dateStatus.value,
-        dateNotes: dateNotes.value.isEmpty ? null : dateNotes.value,
-      ),
+      date: date.value,
       clientIds: selectedClients.isEmpty ? null : selectedClients,
       caseNumber: caseNumber.value.isEmpty ? null : caseNumber.value,
       linkedCaseId: linkCaseController.linkedCases.isEmpty ? null : linkCaseController.getLinkedCasesIds,
@@ -187,7 +165,6 @@ class CaseEditController extends GetxController {
 
   Future<void> goback() async {
     bool status = await disposeControllers();
-    log("Dispose Controllers ==============>   $status");
     NavigatorService.pop();
   }
 
@@ -195,5 +172,9 @@ class CaseEditController extends GetxController {
     bool success1 = await Get.delete<CaseEditController>(tag: "CaseEdit");
     bool success2 = await Get.delete<LinkCaseController>(tag: "EditScreenLinkCase");
     return success1 && success2;
+  }
+
+  Future<void> gotoEditHearings() async {
+    NavigatorService().gotoCaseEditDate(date: date.value);
   }
 }
