@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class DateModel{
   List<PrevDateModel> prevDate;
   DateTime? upcomingDate;
@@ -45,4 +47,14 @@ class DateStatus{
     attended,
     upcoming,
   ];
+
+  String getLabel(String status){
+    if(!isValidStatus(status)) return "Unknown";
+    if(status == notAssigned) return "Not Assigned";
+    return status.capitalizeFirst ?? "Unknown";
+  }
+
+  bool isValidStatus(String status){
+    return all.contains(status);
+  }
 }

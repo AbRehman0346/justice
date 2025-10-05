@@ -5,6 +5,8 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:justice/models/case-model.dart';
 import 'package:justice/models/date-model.dart';
 import 'package:justice/res/colors/app-colors.dart';
+import 'package:justice/res/utils/XElevatedButton.dart';
+import 'package:justice/res/utils/xutils.dart';
 import '../../../models/contact-model.dart';
 import '../case_details/case-details-controller.dart';
 
@@ -20,7 +22,7 @@ class CaseDetailsScreen extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if(didPop) return;
-        await controller.goBack();
+        await controller.leaveScreen();
       },
       child: Scaffold(
         backgroundColor: Color(0xFFF7FAFC),
@@ -90,7 +92,7 @@ class CaseDetailsScreen extends StatelessWidget {
       backgroundColor: Color(0xFF1A365D),
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: controller.goBack,
+        onPressed: controller.leaveScreen,
       ),
       actions: [
         IconButton(
@@ -271,6 +273,13 @@ class CaseDetailsScreen extends StatelessWidget {
               SizedBox(height: 12),
               _buildNotesCard(date.dateNotes!),
             ],
+            XUtils.height(15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                XElevatedButton(label: "HEARINGS", onPressed: controller.gotoHearingDetails),
+              ],
+            ),
           ],
         ),
       ),

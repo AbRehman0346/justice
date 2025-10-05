@@ -76,6 +76,10 @@ class CaseDetailsController extends GetxController {
     }
   }
 
+  void gotoHearingDetails() {
+    NavigatorService().gotoCaseHearingDetails(kase: caseModel.value);
+  }
+
   void editCase() {
     NavigatorService().gotoCaseEditScreen(kase: caseModel.value);
   }
@@ -158,7 +162,7 @@ class CaseDetailsController extends GetxController {
     );
   }
 
-  Future<void> goBack() async {
+  Future<void> leaveScreen() async {
     await Get.delete<CaseDetailsController>();
     NavigatorService.pop();
   }

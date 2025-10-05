@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:justice/views/case_screens/hearing_detail/hearing-detail-screen.dart';
 import '../../models/case-model.dart';
 import '../../models/contact-model.dart';
 import '../../models/date-model.dart';
@@ -87,6 +88,14 @@ class NavigatorService{
     required CaseModel kase,
   }) async {
     Widget view = CaseDetailsScreen(kase: kase);
+    goto(_GotoModel(view, rmStack));
+  }
+
+  Future<void> gotoCaseHearingDetails({
+    bool rmStack = false,
+    required CaseModel kase,
+  }) async {
+    Widget view = HearingDetailScreen(kase: kase);
     goto(_GotoModel(view, rmStack));
   }
 
