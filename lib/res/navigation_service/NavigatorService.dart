@@ -74,12 +74,12 @@ class NavigatorService{
     goto(_GotoModel(view, rmStack));
   }
 
-  Future<DateModel> gotoCaseEditDate({
+  Future<CaseHearingsDateModel> gotoCaseEditDate({
     bool rmStack = false,
-    DateModel? date,
+    CaseHearingsDateModel? date,
   }) async {
     Widget view = DateEditScreen(dateModel: date);
-    DateModel newDate = await goto(_GotoModel(view, rmStack));
+    CaseHearingsDateModel newDate = await goto(_GotoModel(view, rmStack));
     return newDate;
   }
 
@@ -95,7 +95,7 @@ class NavigatorService{
     bool rmStack = false,
     required CaseModel kase,
   }) async {
-    Widget view = HearingDetailScreen(kase: kase);
+    Widget view = CaseHearingsScreen(kase: kase);
     goto(_GotoModel(view, rmStack));
   }
 

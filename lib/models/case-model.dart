@@ -12,7 +12,7 @@ class CaseModel {
   final List<String>? linkedCaseId;
   final List<ContactModel>? clientIds;
   final DateTime createdAt;
-  DateModel? date;
+  CaseHearingsDateModel? date;
   final String? caseNumber;
   final String status;
   final String priority;

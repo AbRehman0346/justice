@@ -25,7 +25,7 @@ class CaseEditController extends GetxController {
   var caseNumber = ''.obs;
   var status = ''.obs;
   var priority = ''.obs;
-  Rx<DateModel?> date = null.obs;
+  Rx<CaseHearingsDateModel?> date = null.obs;
 
   // Linked cases and clients
   var selectedClients = <ContactModel>[].obs;
@@ -39,7 +39,7 @@ class CaseEditController extends GetxController {
   final List<String> priorityOptions = CasePriority().all;
   final List<String> caseStageOptions = CaseStages().all;
   final List<String> caseTypeOptions = CaseTypes().all;
-  final List<String> dateStatusOptions = DateStatus().all;
+  final List<String> dateStatusOptions = HearingStatus().all;
 
   void initializeWithCase(CaseModel caseModel) {
     id.value = caseModel.id;

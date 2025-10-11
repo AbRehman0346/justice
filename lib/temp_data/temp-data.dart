@@ -5,7 +5,7 @@ class TempData{
   static late List<CaseModel> cases;
 
   void init(){
-    DateStatus status = DateStatus();
+    HearingStatus status = HearingStatus();
     CaseStatus caseStatus = CaseStatus();
     cases =   [
       CaseModel(
@@ -100,8 +100,8 @@ class TempData{
         createdAt: DateTime.now(),
         caseNumber: 'SC-2024-001',
         caseType: 'Civil',
-        date: DateModel(
-          prevDate: [PrevDateModel(date: DateTime(2024, 1, 15), dateStatus: status.attended)],
+        date: CaseHearingsDateModel(
+          prevDate: [PrevHearingDateModel(date: DateTime(2024, 1, 15), dateStatus: status.attended)],
           upcomingDate: DateTime(2024, 2, 20),
           dateStatus: status.attended,
           dateNotes: 'Both parties presented preliminary arguments. Next hearing scheduled for evidence submission.',
@@ -130,8 +130,8 @@ class TempData{
         id: '7',
         title: 'Smith vs Johnson Property Dispute',
         proceedingsDetails: 'Hearing for preliminary arguments',
-        date: DateModel(
-          prevDate: [PrevDateModel(date: DateTime(2025, 9, 20), dateStatus: status.attended)],
+        date: CaseHearingsDateModel(
+          prevDate: [PrevHearingDateModel(date: DateTime(2025, 9, 20), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 9, 27),
           dateStatus: status.upcoming,
         ),
@@ -150,8 +150,8 @@ class TempData{
         id: '8',
         title: 'Corporate Merger Approval',
         proceedingsDetails: 'Final hearing for merger approval',
-        date: DateModel(
-          prevDate: [PrevDateModel(date: DateTime(2025, 9, 10), dateStatus: status.attended)],
+        date: CaseHearingsDateModel(
+          prevDate: [PrevHearingDateModel(date: DateTime(2025, 9, 10), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 9, 28),
           dateStatus: status.upcoming,
         ),
@@ -170,8 +170,8 @@ class TempData{
         id: '9',
         title: 'Intellectual Property Rights',
         proceedingsDetails: 'Evidence submission',
-        date: DateModel(
-          prevDate: [PrevDateModel(date: DateTime(2024, 1, 5), dateStatus: status.attended)],
+        date: CaseHearingsDateModel(
+          prevDate: [PrevHearingDateModel(date: DateTime(2024, 1, 5), dateStatus: status.attended)],
           upcomingDate: DateTime(2024, 2, 25),
           dateStatus: status.upcoming,
         ),
@@ -189,8 +189,8 @@ class TempData{
         id: '10',
         title: 'Employment Contract Dispute',
         proceedingsDetails: 'Mediation session',
-        date: DateModel(
-          prevDate: [PrevDateModel(date: DateTime(2025, 1, 20), dateStatus: status.attended)],
+        date: CaseHearingsDateModel(
+          prevDate: [PrevHearingDateModel(date: DateTime(2025, 1, 20), dateStatus: status.attended)],
           upcomingDate: DateTime(2025, 2, 18),
           dateStatus: status.adjourned,
         ),

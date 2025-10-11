@@ -11,6 +11,7 @@ class AppColors{
   static Color cardColor = Colors.white;
 
   static Color iconColor = Color(0xFF1A365D);
+  static Color secondaryIconColor = Colors.white;
   static Color buttonBg = Color(0xFF1A365D);
   static Color buttonForeground = Colors.white;
 }

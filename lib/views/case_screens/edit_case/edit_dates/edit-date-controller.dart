@@ -9,8 +9,8 @@ import '../../../../models/date-model.dart';
 
 class EditDateController extends GetxController {
   var isLoading = false.obs;
-  final DateStatus dateStatus = DateStatus();
-  late Rx<DateModel> dateModel;
+  final HearingStatus dateStatus = HearingStatus();
+  late Rx<CaseHearingsDateModel> dateModel;
 
   // RxList<PrevDateModel> prevDates = <PrevDateModel>[].obs;
   // Rx<DateTime?> upcomingDate = Rx<DateTime?>(null);
@@ -26,19 +26,19 @@ class EditDateController extends GetxController {
   // }
 
   EditDateController(){
-    dateModel = DateModel(
+    dateModel = CaseHearingsDateModel(
       prevDate: [
-        PrevDateModel(
+        PrevHearingDateModel(
           date: DateTime(2024, 1, 15),
           dateStatus: dateStatus.attended,
           dateNotes: "First hearing - Both parties presented preliminary arguments",
         ),
-        PrevDateModel(
+        PrevHearingDateModel(
           date: DateTime(2024, 1, 30),
           dateStatus: dateStatus.adjourned,
           dateNotes: "Adjourned due to witness unavailability",
         ),
-        PrevDateModel(
+        PrevHearingDateModel(
           date: DateTime(2024, 2, 10),
           dateStatus: dateStatus.missed,
           dateNotes: "Client failed to appear",
@@ -51,7 +51,7 @@ class EditDateController extends GetxController {
   }
 
   Color getStatusColor(String status) {
-    DateStatus statuses = DateStatus();
+    HearingStatus statuses = HearingStatus();
 
     if(status == statuses.attended){
       return Color(0xFF48BB78);
@@ -133,7 +133,7 @@ class EditDateController extends GetxController {
     }
   }
 
-  void addPreviousDate(PrevDateModel newDate) {
+  void addPreviousDate(PrevHearingDateModel newDate) {
     // prevDates.add(newDate);
     // // Sort by date descending (most recent first)
     // prevDates.sort((a, b) => b.date.compareTo(a.date));
@@ -152,7 +152,7 @@ class EditDateController extends GetxController {
     });
   }
 
-  void updatePreviousDate(int index, PrevDateModel updatedDate) {
+  void updatePreviousDate(int index, PrevHearingDateModel updatedDate) {
     dateModel.update((model) {
       model!.prevDate[index] = updatedDate;
     });
@@ -185,7 +185,7 @@ class EditDateController extends GetxController {
   bool get hasUpcomingDate => dateModel.value.upcomingDate != null;
   bool get hasPreviousDates => dateModel.value.prevDate.isNotEmpty;
 
-  List<PrevDateModel> get sortedPreviousDates {
+  List<PrevHearingDateModel> get sortedPreviousDates {
     return List.from(dateModel.value.prevDate)
       ..sort((a, b) => b.date.compareTo(a.date));
   }

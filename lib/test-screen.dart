@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:justice/models/case-model.dart';
+import 'package:justice/res/extensions/datetime-extensions.dart';
 import 'package:justice/res/xwidgets/xtext.dart';
 import 'package:justice/temp_data/temp-data.dart';
 
@@ -31,8 +32,7 @@ class _TestScreenState extends State<TestScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(onPressed: addCase, child: XText("Add Case")),
-            ElevatedButton(onPressed: printCases, child: XText("Print Cases")),
+            ElevatedButton(onPressed: onPressed, child: XText("Run Test")),
           ],
         ),
       ), //destination screen
@@ -40,34 +40,8 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
-  void printCases(){
-    log("==============>  Cases:  ${TempData.cases.length}");
-    for(var kase in TempData.cases){
-      log("==============> ${kase.title}");
-    }
-    Fluttertoast.showToast(msg: "Cases ${TempData.cases.length}");
-  }
-
-  void addCase() {
-    CaseModel newCase = CaseModel(
-      id: '1',
-      title: 'Smith vs Johnson Property Dispute',
-      court: 'Supreme Court',
-      city: 'New York',
-      caseNumber: 'SC-2024-001',
-      date: null,
-      clientIds: [
-        TempData.contact("John Smith"),
-      ],
-      status: 'upcoming',
-      priority: 'high',
-      proceedingsDetails: '',
-      caseStage: 'Evidance',
-      createdAt: DateTime.now(),
-    );
-
-    TempData.cases.add(newCase);
-    log("Case Added Successfully");
+  void onPressed(){
+    log("No Any Test ---------------------------------------------------------------");
   }
 
 

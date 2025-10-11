@@ -1,19 +1,19 @@
 import 'package:get/get.dart';
 
-class DateModel{
-  List<PrevDateModel> prevDate;
+class CaseHearingsDateModel{
+  List<PrevHearingDateModel> prevDate;
   DateTime? upcomingDate;
   String dateStatus;
   String? dateNotes;
 
-  DateModel({
+  CaseHearingsDateModel({
     required this.prevDate,
     required this.upcomingDate,
     required this.dateStatus,
     this.dateNotes
   });
 
-  PrevDateModel? get lastDate {
+  PrevHearingDateModel? get lastDate {
     if(prevDate.isEmpty){
       return null;
     }
@@ -21,19 +21,19 @@ class DateModel{
   }
 }
 
-class PrevDateModel{
+class PrevHearingDateModel{
   DateTime date;
   String dateStatus;
   String? dateNotes;
 
-  PrevDateModel({
+  PrevHearingDateModel({
     required this.date,
     required this.dateStatus,
     this.dateNotes,
   });
 }
 
-class DateStatus{
+class HearingStatus{
   final String missed = "missed";
   final String adjourned = "adjourned";
   final String attended = "attended";

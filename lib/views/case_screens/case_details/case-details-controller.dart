@@ -33,7 +33,7 @@ class CaseDetailsController extends GetxController {
   }
 
   Color getDateStatusColor(String status) {
-    final s = DateStatus();
+    final s = HearingStatus();
 
     if(status == s.attended) return Color(0xFF48BB78);
     if(status == s.adjourned) return Color(0xFFED8936);

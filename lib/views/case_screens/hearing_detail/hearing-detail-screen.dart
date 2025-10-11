@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:justice/models/date-model.dart';
-import 'package:justice/res/utils/xutils.dart';
-import '../../../models/case-model.dart';
+import 'package:justice/models/case-model.dart';
+import 'package:justice/res/colors/app-colors.dart';
+import 'package:justice/res/extensions/datetime-extensions.dart';
+import '../add_hearing_dialog/add_hearing_dialog.dart';
 import 'show_hearing_controller.dart';
+import '../../../models/date-model.dart';
 
-class HearingDetailScreen extends StatelessWidget {
+class CaseHearingsScreen extends StatelessWidget {
   CaseModel kase;
-  HearingDetailScreen({super.key, required this.kase});
+  CaseHearingsScreen({required this.kase});
 
-  late HearingDateController controller;
+  late CaseHearingsController controller;
 
   _init(){
-    controller = Get.put(HearingDateController(kase));
+    controller = Get.put(CaseHearingsController(kase));
   }
 
   @override
@@ -27,15 +29,14 @@ class HearingDetailScreen extends StatelessWidget {
           // Header
           _buildHeader(),
 
-          XUtils.height(20),
+          // Tab Bar
+          _buildTabBar(),
 
-          // Search Bar
-          _buildSearchBar(),
-
-          // Dates List
-          _buildDatesList(),
+          // Content
+          _buildContent(),
         ],
       ),
+      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
@@ -43,7 +44,7 @@ class HearingDetailScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
-        top: Get.statusBarHeight,
+        top: 50,
         left: 24,
         right: 24,
         bottom: 20,
@@ -69,21 +70,76 @@ class HearingDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Case Dates',
+                'Case Hearings',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
+              Obx(() => Text(
+                controller.selectedTab.value == 0
+                    ? 'Upcoming'
+                    : '${controller.previousHearings.length} Previous',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+              )),
             ],
           ),
           SizedBox(height: 8),
           Text(
-            'All Case Hearings Will Appear Here',
+            'Track all hearing dates and status',
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+          SizedBox(height: 16),
+          // Case Info Card
+          _buildCaseInfoCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCaseInfoCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.gavel_rounded, color: Colors.white, size: 24),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  controller.kase.title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '${controller.kase.caseNumber ?? "-----"} • ${controller.kase.court ?? "-----"}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -91,67 +147,241 @@ class HearingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: TextField(
-          onChanged: controller.searchDates,
-          decoration: InputDecoration(
-            hintText: 'Search cases...',
-            hintStyle: GoogleFonts.poppins(color: Color(0xFFA0AEC0)),
-            prefixIcon: Icon(Icons.search, color: Color(0xFF4A5568)),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+  Widget _buildTabBar() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 5),
           ),
-        ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildTabButton('Upcoming', 0),
+          _buildTabButton('Previous', 1),
+        ],
       ),
     );
   }
 
-  Widget _buildDatesList() {
+  Widget _buildTabButton(String label, int index) {
+    return Obx(() => Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => controller.setTab(index),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: controller.selectedTab.value == index
+                  ? Color(0xFF1A365D)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  color: controller.selectedTab.value == index
+                      ? Colors.white
+                      : Color(0xFF4A5568),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+  }
+
+  Widget _buildContent() {
     return Expanded(
       child: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
 
-        if (controller.displayedCases.isEmpty) {
-          return _buildEmptyState();
-        }
-
         return RefreshIndicator(
-          onRefresh: () async => controller.refreshDates(),
-          child: ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: controller.displayedCases.length,
-            itemBuilder: (context, index) {
-              final caseItem = controller.displayedCases[index];
-              return _buildDateCard(caseItem);
-            },
-          ),
+          onRefresh: () async => controller.refreshHearings(),
+          child: controller.selectedTab.value == 0
+              ? _buildUpcomingHearing()
+              : _buildPreviousHearings(),
         );
       }),
     );
   }
 
-  Widget _buildDateCard(CaseModel caseItem) {
-    final date = caseItem.date!;
-    final DateTime? displayDate = date.dateStatus == DateStatus().upcoming
-        ? date.upcomingDate
-        : date.prevDate.first.date;
+  Widget _buildUpcomingHearing() {
+    if (controller.upcomingHearing == null) {
+      return _buildEmptyState(
+        'No Upcoming Hearing',
+        Icons.calendar_today_rounded,
+        'No upcoming hearing scheduled for this case',
+      );
+    }
 
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Upcoming Hearing Card
+          _buildUpcomingHearingCard(),
+          SizedBox(height: 20),
+
+          // Last Hearing Summary
+          if (controller.hearings?.lastDate != null)
+            _buildLastHearingSummary(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpcomingHearingCard() {
+    final upcoming = controller.upcomingHearing!;
+
+    return Card(
+      color: AppColors.cardColor,
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Next Hearing',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A365D),
+                  ),
+                ),
+                _buildStatusChip(controller.hearings?.dateStatus ?? ""),
+              ],
+            ),
+
+            SizedBox(height: 16),
+
+            // Date and Time
+            _buildDateTimeSection(upcoming),
+
+            SizedBox(height: 16),
+
+            // Notes
+            if (controller.hearings?.dateNotes != null && controller.hearings!.dateNotes!.isNotEmpty)
+              _buildNotesSection(controller.hearings!.dateNotes!),
+
+            SizedBox(height: 16),
+
+            // Days Countdown
+            _buildCountdownSection(upcoming),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLastHearingSummary() {
+    final lastHearing = controller.hearings?.lastDate!;
+
+    if(lastHearing == null){
+      return _buildEmptyState(
+        'No Last Hearing',
+        Icons.history_rounded,
+        'No last hearing records found for this case',
+      );
+    }
+
+    return Card(
+      color: AppColors.cardColor,
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Last Hearing Summary',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A365D),
+              ),
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: [
+                _buildDateBadge(lastHearing.date),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        controller.formatDate(lastHearing.date),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2D3748),
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      _buildStatusChip(lastHearing.dateStatus),
+                      if (lastHearing.dateNotes != null && lastHearing.dateNotes!.isNotEmpty) ...[
+                        SizedBox(height: 8),
+                        Text(
+                          lastHearing.dateNotes!,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Color(0xFF718096),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreviousHearings() {
+    if (controller.previousHearings.isEmpty) {
+      return _buildEmptyState(
+        'No Previous Hearings',
+        Icons.history_rounded,
+        'No previous hearing records found for this case',
+      );
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.all(16),
+      itemCount: controller.previousHearings.length,
+      itemBuilder: (context, index) {
+        final hearing = controller.previousHearings[index];
+        return _buildPreviousHearingCard(hearing, index);
+      },
+    );
+  }
+
+  Widget _buildPreviousHearingCard(PrevHearingDateModel hearing, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -169,65 +399,72 @@ class HearingDetailScreen extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => controller.viewCaseDetails(caseItem),
+          onTap: () => controller.editHearing(hearing),
           child: Padding(
             padding: EdgeInsets.all(16),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with Case Info and Priority
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Date Badge
-                    _buildDateBadge(displayDate),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                // Date Badge
+                _buildDateBadge(hearing.date),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header with Hearing Number and Status
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            caseItem.title,
+                            'Hearing ${controller.previousHearings.length - index}',
                             style: GoogleFonts.poppins(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF1A365D),
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            '${caseItem.court} • ${caseItem.city}',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Color(0xFF718096),
-                            ),
-                          ),
+                          _buildStatusChip(hearing.dateStatus),
                         ],
                       ),
-                    ),
-                    _buildPriorityIndicator(caseItem.priority),
-                  ],
+                      SizedBox(height: 8),
+                      // Date and Time
+                      Text(
+                        controller.formatDate(hearing.date),
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Color(0xFF4A5568),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        '${hearing.date.formatTime} • ${hearing.date.dayDifferenceString(DateTime.now())}',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Color(0xFF718096),
+                        ),
+                      ),
+                      // Notes
+                      if (hearing.dateNotes != null && hearing.dateNotes!.isNotEmpty) ...[
+                        SizedBox(height: 8),
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFEDF2F7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            hearing.dateNotes!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Color(0xFF4A5568),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-
-                SizedBox(height: 12),
-
-                // Case Details
-                _buildCaseDetailRow(
-                  icon: Icons.assignment_rounded,
-                  text: caseItem.caseNumber ?? 'No Case Number',
-                ),
-
-                _buildCaseDetailRow(
-                  icon: Icons.work_outline_rounded,
-                  text: '${caseItem.caseType ?? "N/A"} • ${caseItem.caseStage}',
-                ),
-
-                SizedBox(height: 8),
-
-                // Date Status and Notes
-                _buildDateStatusSection(date),
               ],
             ),
           ),
@@ -236,7 +473,7 @@ class HearingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDateBadge(DateTime? date) {
+  Widget _buildDateBadge(DateTime date) {
     return Container(
       width: 60,
       padding: EdgeInsets.all(8),
@@ -247,8 +484,7 @@ class HearingDetailScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            date == null ? 'N/A' :
-            controller.getDayName(date.weekday).toUpperCase(),
+            date.shortDayName.toUpperCase(),
             style: GoogleFonts.poppins(
               fontSize: 10,
               fontWeight: FontWeight.bold,
@@ -256,7 +492,6 @@ class HearingDetailScreen extends StatelessWidget {
             ),
           ),
           Text(
-            date == null ? '--' :
             date.day.toString(),
             style: GoogleFonts.poppins(
               fontSize: 18,
@@ -265,11 +500,10 @@ class HearingDetailScreen extends StatelessWidget {
             ),
           ),
           Text(
-            date == null ? '----' :
-            controller.getMonthName(date.month),
+            date.shortMonthName,
             style: GoogleFonts.poppins(
               fontSize: 10,
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
             ),
           ),
         ],
@@ -277,114 +511,117 @@ class HearingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPriorityIndicator(String priority) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red),
-      ),
-      child: Text(
-        priority.toUpperCase(),
-        style: GoogleFonts.poppins(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: Colors.red,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCaseDetailRow({required IconData icon, required String text}) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Icon(icon, size: 14, color: Color(0xFF718096)),
-          SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                color: Color(0xFF4A5568),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateStatusSection(DateModel date) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildDateTimeSection(DateTime date) {
+    return Row(
       children: [
-        // Status and Time
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildStatusChip(date.dateStatus),
-            Text(
-              controller.formatTime((date.dateStatus == DateStatus().upcoming
-                  ? date.upcomingDate
-                  : date.prevDate.first.date) ?? DateTime.now()),
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1A365D),
-              ),
-            ),
-          ],
-        ),
-
-        // Date Notes (if any)
-        if (date.dateNotes != null && date.dateNotes!.isNotEmpty) ...[
-          SizedBox(height: 8),
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Color(0xFFEDF2F7),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.note_rounded, size: 16, color: Color(0xFF1A365D)),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    date.dateNotes!,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Color(0xFF4A5568),
-                    ),
-                  ),
+        Icon(Icons.calendar_today_rounded, color: Color(0xFF1A365D), size: 20),
+        SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                controller.formatDate(date),
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2D3748),
                 ),
-              ],
-            ),
-          ),
-        ],
-
-        // Days Difference
-        SizedBox(height: 8),
-        Text(
-          controller.getDaysDifference((date.dateStatus == DateStatus().upcoming
-              ? date.upcomingDate
-              : date.prevDate.first.date) ?? DateTime.now()),
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: Color(0xFF718096),
-            fontStyle: FontStyle.italic,
+              ),
+              SizedBox(height: 4),
+              Text(
+                '${date.formatTime} • ${date.dayDifferenceString(DateTime.now())}',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Color(0xFF718096),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
+  Widget _buildNotesSection(String notes) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Notes:',
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Color(0xFFEDF2F7),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            notes,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Color(0xFF4A5568),
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCountdownSection(DateTime date) {
+    final now = DateTime.now();
+    final difference = date.difference(now);
+    final days = difference.inDays;
+
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0xFFE8F4FD),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0xFFBEE3F8)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Days Remaining',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: Color(0xFF4A5568),
+                ),
+              ),
+              Text(
+                days.toString(),
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A365D),
+                ),
+              ),
+            ],
+          ),
+          Icon(
+            Icons.access_time_rounded,
+            size: 40,
+            color: Color(0xFF1A365D).withOpacity(0.5),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatusChip(String status) {
-    final color = controller.getDateStatusColor(status);
+    final color = controller.getStatusColor(status);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -393,7 +630,7 @@ class HearingDetailScreen extends StatelessWidget {
         border: Border.all(color: color),
       ),
       child: Text(
-        controller.getDateStatusText(status),
+        controller.getStatusLabel(status),
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -403,26 +640,29 @@ class HearingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(String title, IconData icon, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.calendar_today_rounded,
+            icon,
             size: 80,
             color: Color(0xFFCBD5E0),
           ),
           SizedBox(height: 16),
-          Text('No previous dates',
+          Text(
+            title,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Color(0xFF718096),
             ),
           ),
+          SizedBox(height: 8),
           Text(
-            'All case hearings will appear here',
+            message,
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: Color(0xFFA0AEC0),
@@ -430,6 +670,51 @@ class HearingDetailScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: showAddUpcomingHearingDialog, // Updated
+      backgroundColor: Color(0xFF1A365D),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Icon(Icons.add, color: Colors.white),
+    );
+  }
+
+  void showAddUpcomingHearingDialog() {
+    Get.dialog(
+      AddUpcomingHearingDialog(
+        currentUpcomingDate: controller.upcomingHearing,
+        onUpcomingHearingUpdated: (previousHearing, newUpcomingDate, notes) {
+          // Handle the date transition logic here
+          // previousHearing will be null if there was no current upcoming date
+
+          if (previousHearing != null) {
+            // Add the current upcoming date to previous dates list
+            controller.kase.date?.prevDate.add(previousHearing);
+          }
+
+          // Set the new upcoming date
+          controller.kase.date?.upcomingDate = newUpcomingDate;
+          controller.kase.date?.dateStatus = HearingStatus().upcoming;
+          controller.kase.date?.dateNotes = notes;
+
+          // Update the UI
+          // update();
+
+          Get.snackbar(
+            'Success',
+            'New hearing scheduled successfully',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        },
+      ),
+      barrierDismissible: false,
     );
   }
 }

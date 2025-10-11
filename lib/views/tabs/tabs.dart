@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:justice/res/colors/app-colors.dart';
 import 'package:justice/views/calender/calender-view.dart';
 import 'package:justice/views/home/home-screen.dart';
+import 'package:justice/views/management_screen/management_screen.dart';
 import 'tabs-controller.dart' as tabCont;
 
 class Tabs extends StatelessWidget {
@@ -30,6 +31,9 @@ class Tabs extends StatelessWidget {
     else if(controller.activeTab.value == 1){
       return CalendarScreen();
     }
+    else if(controller.activeTab.value == 2){
+      return ManagementScreen();
+    }
 
     return Container();
   }
@@ -42,6 +46,7 @@ class Tabs extends StatelessWidget {
       items: [
         Icon(Icons.home, size: 30, color: AppColors.foreground),
         Icon(Icons.calendar_month, size: 30, color: AppColors.foreground),
+        Icon(Icons.manage_accounts_rounded, size: 30, color: AppColors.foreground),
       ],
       onTap: (index) => controller.changeTab(index),
     );

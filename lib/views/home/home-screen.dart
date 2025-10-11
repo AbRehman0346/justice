@@ -116,7 +116,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildStatsCards() {
-    final status = DateStatus();
+    final status = HearingStatus();
     return Row(
       children: [
         Expanded(

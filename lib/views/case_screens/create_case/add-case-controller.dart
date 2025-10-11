@@ -27,14 +27,14 @@ class AddCaseController extends GetxController {
 
   // Date fields
   var upcomingDate = Rxn<DateTime>();
-  var dateStatus = DateStatus().notAssigned.obs;
+  var dateStatus = HearingStatus().notAssigned.obs;
   var dateNotes = ''.obs;
 
   final List<String> statusOptions = CaseStatus().all;
   final List<String> priorityOptions = CasePriority().all;
   final List<String> caseStageOptions = CaseStages().all;
   final List<String> caseTypeOptions = CaseTypes().all;
-  final List<String> dateStatusOptions = [DateStatus().upcoming, DateStatus().notAssigned];
+  final List<String> dateStatusOptions = [HearingStatus().upcoming, HearingStatus().notAssigned];
 
   // var linkedCaseIds = <String>[].obs;
   var newLinkedCaseId = ''.obs;
@@ -61,7 +61,7 @@ class AddCaseController extends GetxController {
 
   void setUpcomingDate(DateTime? date) {
     upcomingDate.value = date;
-    setDateStatus(DateStatus().upcoming);
+    setDateStatus(HearingStatus().upcoming);
   }
 
   void addClient(ContactModel client) {
@@ -130,7 +130,7 @@ class AddCaseController extends GetxController {
       proceedingsDetails: proceedingsDetails.value,
       caseStage: caseStage.value,
       createdAt: DateTime.now(),
-      date: DateModel(
+      date: CaseHearingsDateModel(
         prevDate: [], // Empty initially, will be added later
         upcomingDate: upcomingDate.value!,
         dateStatus: dateStatus.value,

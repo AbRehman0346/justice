@@ -12,7 +12,7 @@ import 'edit-date-controller.dart';
 
 class DateEditScreen extends StatelessWidget {
   final EditDateController controller = Get.put(EditDateController());
-  DateModel? dateModel;
+  CaseHearingsDateModel? dateModel;
 
   DateEditScreen({super.key, this.dateModel});
 
@@ -157,7 +157,7 @@ class DateEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPreviousDateItem(PrevDateModel dateModel, int index) {
+  Widget _buildPreviousDateItem(PrevHearingDateModel dateModel, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -518,7 +518,7 @@ class DateEditScreen extends StatelessWidget {
   }
 
   void _showAddPreviousDateDialog() {
-    final newDate = PrevDateModel(
+    final newDate = PrevHearingDateModel(
       date: DateTime.now(),
       dateStatus: controller.dateStatus.upcoming,
       dateNotes: "",
@@ -560,7 +560,7 @@ class DateEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddDateForm(PrevDateModel dateModel, {bool isNew = true, int? index}) {
+  Widget _buildAddDateForm(PrevHearingDateModel dateModel, {bool isNew = true, int? index}) {
     final date = dateModel.date.obs;
     final status = dateModel.dateStatus.obs;
     final notes = TextEditingController(text: dateModel.dateNotes);
@@ -625,7 +625,7 @@ class DateEditScreen extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  final updatedDate = PrevDateModel(
+                  final updatedDate = PrevHearingDateModel(
                     date: date.value,
                     dateStatus: status.value,
                     dateNotes: notes.text.isEmpty ? null : notes.text,

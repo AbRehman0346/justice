@@ -234,7 +234,7 @@ class CaseDetailsScreen extends StatelessWidget {
     }
 
 
-    DateModel date = controller.caseModel.value.date!;
+    CaseHearingsDateModel date = controller.caseModel.value.date!;
 
     Widget getPrevHearing(){
       if(date.prevDate.isEmpty){
