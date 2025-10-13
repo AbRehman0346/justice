@@ -17,6 +17,8 @@ class CaseModel {
   final String status;
   final String priority;
 
+  bool _isDummy = false;
+
   CaseModel({
     required this.id,
     required this.title,
@@ -33,8 +35,42 @@ class CaseModel {
     this.caseNumber,
     this.linkedCaseId,
   });
-}
 
+  factory CaseModel.dummy(
+  {
+    String id = "--",
+    String title = "Unknown",
+    String court = "Unknown",
+    String city = "Unknown",
+    String status = "Unknown",
+    String priority = "Unknown",
+    String proceedingsDetails = "Unknown",
+    String caseStage = "Unknown",
+    DateTime? createdAt,
+}
+      ){
+    DateTime dateTime = createdAt ?? DateTime.now();
+
+
+    final object = CaseModel(
+        id: id,
+        title: title,
+        court: court,
+        city: city,
+        status: status,
+        priority: priority,
+        proceedingsDetails: proceedingsDetails,
+        caseStage: caseStage,
+        createdAt: dateTime,
+    );
+
+    object._isDummy = true;
+    return object;
+  }
+
+  bool get isDummy => _isDummy;
+  bool get isNotDummy => !_isDummy;
+}
 
 class CasePriority{
   final String high = "high";

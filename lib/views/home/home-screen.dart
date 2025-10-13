@@ -73,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    UserModel.getCurrentUser.name,
+                    UserModel.currentUser.name,
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -87,13 +87,13 @@ class HomeScreen extends StatelessWidget {
                 onTap: (){
                   log("==================CURRENT USER=========================>");
 
-                  log(UserModel.getCurrentUser.id);
-                  log(UserModel.getCurrentUser.name);
-                  log(UserModel.getCurrentUser.email);
-                  log(UserModel.getCurrentUser.country);
-                  log(UserModel.getCurrentUser.city);
-                  log(UserModel.getCurrentUser.phoneNumber);
-                  log(UserModel.getCurrentUser.password);
+                  log(UserModel.currentUser.id);
+                  log(UserModel.currentUser.name);
+                  log(UserModel.currentUser.email);
+                  log(UserModel.currentUser.country);
+                  log(UserModel.currentUser.city);
+                  log(UserModel.currentUser.phoneNumber);
+                  log(UserModel.currentUser.password);
 
                   log("===========================================>");
                   Fluttertoast.showToast(msg: "Cases ${CasesData.cases.length}");

@@ -3,16 +3,26 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:justice/res/colors/app-colors.dart';
+import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
 import '../../../models/associate_lawyer_model.dart';
 import '../../../res/xwidgets/xtext.dart';
 import 'associate-lawyer-detail-controller.dart';
 
 class AssociateLawyerDetailsScreen extends StatelessWidget {
-  final AssociateLawyerController controller = Get.put(AssociateLawyerController());
+  AssociatedLinksModel associate;
+
+  AssociateLawyerDetailsScreen(this.associate, {super.key});
+
+  late AssociateLawyerController controller;
+
+  _init(){
+    controller = Get.put(AssociateLawyerController(associate));
+  }
 
   @override
   Widget build(BuildContext context) {
+    _init();
     return Scaffold(
       backgroundColor: Color(0xFFF7FAFC),
       body: Obx(() => CustomScrollView(
@@ -67,7 +77,7 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         title: Text(
-          controller.associateLawyer.value.id,
+          controller.associate.value.associateLawyerDetails.name,
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
             color: Colors.white,
@@ -121,11 +131,11 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: controller.getRoleColor(controller.associateLawyer.value.role),
+                    color: controller.getRoleColor(controller.associate.value.role),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    controller.getRoleBadge(controller.associateLawyer.value.role),
+                    controller.getRoleBadge(controller.associate.value.role),
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -161,11 +171,11 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            _buildContactRow(Icons.email, 'Email', controller.associateLawyer.value.id),
-            _buildContactRow(Icons.phone, 'Phone', controller.associateLawyer.value.id),
+            _buildContactRow(Icons.email, 'Email', controller.associate.value.associateLawyerDetails.email),
+            _buildContactRow(Icons.phone, 'Phone', controller.associate.value.associateLawyerDetails.phoneNumber),
             _buildContactRow(Icons.calendar_today, 'Joined',
-                '${controller.associateLawyer.value.joinedDate.day}/${controller.associateLawyer.value.joinedDate.month}/${controller.associateLawyer.value.joinedDate.year}'),
-            _buildContactRow(Icons.work, 'Role', controller.associateLawyer.value.role),
+                '${controller.associate.value.joinedDate.day}/${controller.associate.value.joinedDate.month}/${controller.associate.value.joinedDate.year}'),
+            _buildContactRow(Icons.work, 'Role', controller.associate.value.role),
           ],
         ),
       ),
@@ -260,7 +270,7 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    access.caseId,
+                    access.kase.title,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -277,7 +287,7 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
             SizedBox(height: 8),
 
             // Access Details
-            _buildAccessDetailRow('Granted by', access.grantedBy),
+            _buildAccessDetailRow('Granted by', access.grantedBy.name),
             _buildAccessDetailRow('Granted on',
                 '${access.grantedAt.day}/${access.grantedAt.month}/${access.grantedAt.year}'),
 
@@ -361,7 +371,7 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
         // Revoke Access Button
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () => controller.revokeCaseAccess(access.caseId),
+            onPressed: () => controller.revokeCaseAccess(access.kase.id),
             icon: Icon(Icons.remove_circle_outline, size: 16, color: Colors.red),
             label: Text('Revoke', style: TextStyle(color: Colors.red)),
             style: OutlinedButton.styleFrom(
@@ -410,7 +420,7 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              access.caseId,
+              access.kase.title,
               style: GoogleFonts.poppins(color: Color(0xFF718096)),
             ),
             SizedBox(height: 20),
@@ -438,14 +448,15 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.updateCaseAccess(access.caseId, controller.selectedAccessLevel.value);
-                      Get.back();
+                      controller.updateCaseAccess(access.kase.id, controller.selectedAccessLevel.value);
+                      NavigatorService.pop();
                     },
-                    child: Text('Update'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1A365D),
+                      backgroundColor: AppColors.buttonBg,
+                      foregroundColor: AppColors.buttonForeground,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
+                    child: XText('Update', bold: true),
                   ),
                 ),
               ],
@@ -552,7 +563,8 @@ class AssociateLawyerDetailsScreen extends StatelessWidget {
             icon: Icon(Icons.add),
             label: Text('Grant First Access'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF1A365D),
+              backgroundColor: AppColors.buttonBg,
+              foregroundColor: AppColors.buttonForeground,
             ),
           ),
         ],

@@ -1,4 +1,9 @@
-class AssociateLawyerModel {
+import 'package:get/get.dart';
+import 'package:justice/models/case-model.dart';
+import 'package:justice/models/user-model.dart';
+import 'package:justice/temp_data/cases-data.dart';
+
+class AssociatedLinksModel {
   final String id;
   final String lawyerId;
   final String associateLawyerId;
@@ -6,7 +11,9 @@ class AssociateLawyerModel {
   final DateTime joinedDate;
   final List<CaseAccess> caseAccesses;
 
-  AssociateLawyerModel({
+  UserModel? _associateLawyerDetails;
+
+  AssociatedLinksModel({
     required this.id,
     required this.lawyerId,
     required this.associateLawyerId,
@@ -14,22 +21,48 @@ class AssociateLawyerModel {
     required this.joinedDate,
     required this.caseAccesses,
   });
+
+  UserModel get associateLawyerDetails{
+    if(_associateLawyerDetails != null) return _associateLawyerDetails!;
+
+    _associateLawyerDetails = UserModel.getUserById(associateLawyerId);
+    return _associateLawyerDetails!;
+  }
+
 }
 
 class CaseAccess {
-  final String caseId;
+  CaseModel? _case;
+  UserModel? _grantedByUserDetails;
+
+  late final String _caseId;
   final String accessLevel;
   final DateTime grantedAt;
-  final String grantedBy;
+  late final String _grantedBy;
   DateTime? expiresAt;
 
   CaseAccess({
-    required this.caseId,
+    required String caseId,
     required this.accessLevel,
     required this.grantedAt,
-    required this.grantedBy,
+    required String grantedBy,
     this.expiresAt,
-  });
+  }){
+    this._caseId = caseId;
+    this._grantedBy = grantedBy;
+  }
+
+  CaseModel get kase {
+    if(_case != null && _case!.isNotDummy) return _case!;
+    _case = CasesData.getCaseById(_caseId) ?? CaseModel.dummy(id: _caseId);
+    return _case!;
+  }
+
+  UserModel get grantedBy {
+    if(_grantedByUserDetails != null) return _grantedByUserDetails!;
+    _grantedByUserDetails = UserModel.getUserById(_grantedBy);
+    return _grantedByUserDetails!;
+  }
 }
 
 class CaseAccessLevel{
@@ -45,5 +78,5 @@ class LawyerRole{
   String junior = "junior";
   String partner = "partner";
 
-  List<String> get all => [senior, junior, partner];
+  List<String> get all => [senior.capitalizeFirst!, junior.capitalizeFirst!, partner.capitalizeFirst!];
 }

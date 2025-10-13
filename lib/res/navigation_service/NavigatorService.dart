@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:justice/models/associate_lawyer_model.dart';
 import 'package:justice/views/associate_lawyer/detail-screen/associate-lawyer-detail-screen.dart';
 import 'package:justice/views/associate_lawyer/list-screen/associate_lawyers_list.dart';
 import 'package:justice/views/case_screens/hearing_detail/hearing-detail-screen.dart';
@@ -121,14 +122,15 @@ class NavigatorService{
   Future<void> gotoAssociateLawyer({
     bool rmStack = false,
   }) async {
-    Widget view = AssociateLawyersScreen();
+    Widget view = AssociateListScreen();
     goto(_GotoModel(view, rmStack));
   }
 
   Future<void> gotoAssociateLawyerDetail({
     bool rmStack = false,
+    required AssociatedLinksModel associate,
   }) async {
-    Widget view = AssociateLawyerDetailsScreen();
+    Widget view = AssociateLawyerDetailsScreen(associate);
     goto(_GotoModel(view, rmStack));
   }
 }

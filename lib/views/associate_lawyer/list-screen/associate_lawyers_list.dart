@@ -6,9 +6,9 @@ import 'package:justice/models/associate_lawyer_model.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import '_controller.dart';
 
-class AssociateLawyersScreen extends StatelessWidget {
+class AssociateListScreen extends StatelessWidget {
 
-  late final Controller controller;
+  late Controller controller;
 
   _init(){
     controller = Get.put(Controller());
@@ -33,13 +33,7 @@ class AssociateLawyersScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.add, color: Color(0xFF1A365D)),
-            onPressed: () {
-              Get.snackbar(
-                'Add Associate',
-                'Add new associate lawyer functionality',
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            },
+            onPressed: () => controller.showAddLawyerDialog(),
           ),
         ],
       ),
@@ -53,10 +47,7 @@ class AssociateLawyersScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAssociateCard(AssociateLawyerModel kase) {
-
-    final associate = controller.getLawyersById(kase.associateLawyerId);
-
+  Widget _buildAssociateCard(AssociatedLinksModel associate) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -77,16 +68,16 @@ class AssociateLawyersScreen extends StatelessWidget {
           child: Icon(Icons.person, color: Color(0xFF1A365D)),
         ),
         title: Text(
-          associate.name,
+          associate.associateLawyerDetails.name,
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(associate.email),
+            Text(associate.associateLawyerDetails.email),
             SizedBox(height: 4),
             Text(
-              kase.caseAccesses.length.toString(),
+              "Shared ${associate.caseAccesses.length.toString()} Cases",
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: Color(0xFF48BB78),
@@ -97,7 +88,7 @@ class AssociateLawyersScreen extends StatelessWidget {
         ),
         trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFFCBD5E0)),
         onTap: () {
-          NavigatorService().gotoAssociateLawyerDetail();
+          NavigatorService().gotoAssociateLawyerDetail(associate: associate);
         },
       ),
     );

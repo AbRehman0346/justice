@@ -82,4 +82,16 @@ class UsersData {
     }
     return null;
   }
+
+  UserModel? findUserByEmailOrPhone(String emailOrPhone) {
+    try{
+      return UsersData.users.firstWhere(
+            (user) =>
+        user.email?.toLowerCase() == emailOrPhone.toLowerCase() ||
+            user.phoneNumber?.replaceAll(RegExp(r'[^0-9]'), '') == emailOrPhone.replaceAll(RegExp(r'[^0-9]'), ''),
+      );
+    }catch(e){
+      return null;
+    }
+  }
 }

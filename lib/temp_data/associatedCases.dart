@@ -1,8 +1,9 @@
 import 'package:justice/models/associate_lawyer_model.dart';
+import 'package:justice/models/user-model.dart';
 
 class AssociatedCases{
-  List<AssociateLawyerModel> associatedCases = [
-    AssociateLawyerModel(
+  static List<AssociatedLinksModel> associatedCases = [
+    AssociatedLinksModel(
         id: "1", 
         lawyerId: "6",
         associateLawyerId: "1",
@@ -15,7 +16,7 @@ class AssociatedCases{
         ],
     ),
 
-    AssociateLawyerModel(
+    AssociatedLinksModel(
       id: "2",
       lawyerId: "6",
       associateLawyerId: "2",
@@ -28,7 +29,7 @@ class AssociatedCases{
       ],
     ),
 
-    AssociateLawyerModel(
+    AssociatedLinksModel(
       id: "3",
       lawyerId: "6",
       associateLawyerId: "3",
@@ -42,7 +43,11 @@ class AssociatedCases{
     ),
   ];
 
-  List<AssociateLawyerModel> getAssociatedCasesByLawyerId(String lawyerId){
+  List<AssociatedLinksModel> getAssociatedCasesByLawyerId(String lawyerId){
     return associatedCases.where((associateCase) => associateCase.lawyerId == lawyerId).toList();
+  }
+
+  bool doesAssociationExists(String lawyerId, String associationId){
+    return associatedCases.any((associateCase) => associateCase.id == associationId && associateCase.lawyerId == lawyerId);
   }
 }

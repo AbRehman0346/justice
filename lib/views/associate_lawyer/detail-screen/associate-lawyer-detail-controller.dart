@@ -1,105 +1,34 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:justice/models/user-model.dart';
 import 'package:justice/res/colors/app-colors.dart';
+import 'package:justice/res/navigation_service/NavigatorService.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../../../models/associate_lawyer_model.dart';
 import '../../../models/case-model.dart';
 
 class AssociateLawyerController extends GetxController {
   var isLoading = false.obs;
   var isEditingPermissions = false.obs;
-  var selectedAccessLevel = 'read'.obs;
+  var selectedAccessLevel = CaseAccessLevel().read.obs;
 
-  // Sample associate lawyer data
-  final associateLawyer = AssociateLawyerModel(
-    lawyerId: "6",
-    associateLawyerId: "1",
-    id: 'AL001',
-    role: 'Senior Associate',
-    joinedDate: DateTime(2023, 1, 15),
-    caseAccesses: [
-      CaseAccess(
-        caseId: '1',
-        accessLevel: 'write',
-        grantedAt: DateTime(2024, 1, 10),
-        grantedBy: 'Robert Wilson',
-      ),
-      CaseAccess(
-        caseId: '2',
-        accessLevel: 'read',
-        grantedAt: DateTime(2024, 1, 15),
-        grantedBy: 'Robert Wilson',
-      ),
-      CaseAccess(
-        caseId: '3',
-        accessLevel: 'none',
-        grantedAt: DateTime(2024, 1, 5),
-        grantedBy: 'Robert Wilson',
-      ),
-    ],
-  ).obs;
+  late Rx<AssociatedLinksModel> associate;
 
-  // Sample cases that can be shared
-  final availableCases = [
-    CaseModel(
-      id: '1',
-      title: 'Smith vs Johnson Property Dispute',
-      court: 'Supreme Court',
-      city: 'New York',
-      status: 'active',
-      priority: 'high',
-      proceedingsDetails: 'Property dispute case',
-      caseStage: 'First Hearing',
-      createdAt: DateTime.now(),
-      caseNumber: 'SC-2024-001',
-    ),
-    CaseModel(
-      id: '2',
-      title: 'Corporate Merger Approval',
-      court: 'High Court',
-      city: 'Los Angeles',
-      status: 'active',
-      priority: 'medium',
-      proceedingsDetails: 'Merger approval case',
-      caseStage: 'Arguments',
-      createdAt: DateTime.now(),
-      caseNumber: 'HC-2024-045',
-    ),
-    CaseModel(
-      id: '3',
-      title: 'Intellectual Property Rights',
-      court: 'District Court',
-      city: 'Chicago',
-      status: 'active',
-      priority: 'high',
-      proceedingsDetails: 'IP rights infringement case',
-      caseStage: 'Evidence',
-      createdAt: DateTime.now(),
-      caseNumber: 'DC-2024-123',
-    ),
-    CaseModel(
-      id: '4',
-      title: 'Employment Contract Dispute',
-      court: 'Labor Court',
-      city: 'Houston',
-      status: 'disposed-off',
-      priority: 'low',
-      proceedingsDetails: 'Employment dispute case',
-      caseStage: 'Mediation',
-      createdAt: DateTime.now(),
-      caseNumber: 'LC-2024-078',
-    ),
-  ].obs;
+  AssociateLawyerController(AssociatedLinksModel associate){
+    this.associate = associate.obs;
+  }
 
   List<CaseModel> get casesWithoutAccess {
-    return availableCases.where((caseItem) {
-      return !associateLawyer.value.caseAccesses.any((access) => access.caseId == caseItem.id);
+    return CasesData.cases.where((caseItem) {
+      if(associate.value.caseAccesses.isEmpty) return true;
+      return associate.value.caseAccesses.any((access) => access.kase.id != caseItem.id);
     }).toList();
   }
 
   List<CaseAccess> get activeCaseAccesses {
-    return associateLawyer.value.caseAccesses.where((access) {
-      return access.accessLevel != 'none' &&
-          (access.expiresAt == null || access.expiresAt!.isAfter(DateTime.now()));
+    return associate.value.caseAccesses.where((access) {
+      return (access.expiresAt == null || access.expiresAt!.isAfter(DateTime.now()));
     }).toList();
   }
 
@@ -112,15 +41,19 @@ class AssociateLawyerController extends GetxController {
       caseId: caseItem.id,
       accessLevel: accessLevel,
       grantedAt: DateTime.now(),
-      grantedBy: 'You', // Current user
+      grantedBy: UserModel.currentUser.id,
     );
+    log("Created New Case");
 
     // Remove existing access if any
-    associateLawyer.value.caseAccesses.removeWhere((access) => access.caseId == caseItem.id);
+    associate.value.caseAccesses.removeWhere((access) => access.kase.id == caseItem.id);
+    log("Removed Access if any");
 
     // Add new access
-    associateLawyer.value.caseAccesses.add(newAccess);
-    associateLawyer.refresh();
+    associate.value.caseAccesses.add(newAccess);
+    log("Added New Case");
+    associate.refresh();
+    log("Refresh Done");
 
     Get.snackbar(
       'Access Granted',
@@ -129,20 +62,21 @@ class AssociateLawyerController extends GetxController {
       backgroundColor: Colors.green,
       colorText: Colors.white,
     );
+    log("Msg Printed.....");
   }
 
   void updateCaseAccess(String caseId, String newAccessLevel) {
-    final accessIndex = associateLawyer.value.caseAccesses.indexWhere((access) => access.caseId == caseId);
+    final accessIndex = associate.value.caseAccesses.indexWhere((access) => access.kase.id == caseId);
 
     if (accessIndex != -1) {
-      associateLawyer.value.caseAccesses[accessIndex] = CaseAccess(
+      associate.value.caseAccesses[accessIndex] = CaseAccess(
         caseId: caseId,
         accessLevel: newAccessLevel,
-        grantedAt: associateLawyer.value.caseAccesses[accessIndex].grantedAt,
-        grantedBy: associateLawyer.value.caseAccesses[accessIndex].grantedBy,
-        expiresAt: associateLawyer.value.caseAccesses[accessIndex].expiresAt,
+        grantedAt: associate.value.caseAccesses[accessIndex].grantedAt,
+        grantedBy: associate.value.caseAccesses[accessIndex].grantedBy.id,
+        expiresAt: associate.value.caseAccesses[accessIndex].expiresAt,
       );
-      associateLawyer.refresh();
+      associate.refresh();
 
       Get.snackbar(
         'Permissions Updated',
@@ -155,8 +89,8 @@ class AssociateLawyerController extends GetxController {
   }
 
   void revokeCaseAccess(String caseId) {
-    associateLawyer.value.caseAccesses.removeWhere((access) => access.caseId == caseId);
-    associateLawyer.refresh();
+    associate.value.caseAccesses.removeWhere((access) => access.kase.id == caseId);
+    associate.refresh();
 
     Get.snackbar(
       'Access Revoked',
@@ -179,7 +113,7 @@ class AssociateLawyerController extends GetxController {
         color: Colors.black,
       ),
       title: 'Remove Associate Lawyer',
-      middleText: 'Are you sure you want to remove "${associateLawyer.value.id}" from your team? This will revoke all case accesses.',
+      middleText: 'Are you sure you want to remove "${associate.value.id}" from your team? This will revoke all case accesses.',
       textConfirm: 'Remove',
       textCancel: 'Cancel',
       confirmTextColor: Colors.white,
@@ -188,7 +122,7 @@ class AssociateLawyerController extends GetxController {
         Get.back(result: 'removed'); // Return to previous screen
         Get.snackbar(
           'Removed',
-          '${associateLawyer.value.id} has been removed from your team',
+          '${associate.value.id} has been removed from your team',
           snackPosition: SnackPosition.BOTTOM,
         );
       },
@@ -196,29 +130,19 @@ class AssociateLawyerController extends GetxController {
   }
 
   Color getAccessLevelColor(String accessLevel) {
-    switch (accessLevel) {
-      case 'write':
-        return Color(0xFF48BB78); // Green
-      case 'read':
-        return Color(0xFFED8936); // Orange
-      case 'none':
-        return Color(0xFFF56565); // Red
-      default:
-        return Color(0xFFCBD5E0);
-    }
+    CaseAccessLevel level = CaseAccessLevel();
+    if(accessLevel == level.write) return Color(0xFF48BB78); // Green
+    if(accessLevel == level.read) return Color(0xFFED8936); // Orange
+    if(accessLevel == level.none) return Color(0xFFF56565); // Red
+    return Color(0xFFCBD5E0);
   }
 
   String getAccessLevelText(String accessLevel) {
-    switch (accessLevel) {
-      case 'write':
-        return 'Read & Write';
-      case 'read':
-        return 'Read Only';
-      case 'none':
-        return 'No Access';
-      default:
-        return accessLevel.capitalizeFirst!;
-    }
+    CaseAccessLevel level = CaseAccessLevel();
+    if(accessLevel == level.write) return 'Read & Write';
+    if(accessLevel == level.read) return 'Read Only';
+    if(accessLevel == level.none) return 'No Access';
+    return accessLevel.capitalizeFirst!;
   }
 
   String getRoleBadge(String role) {
@@ -271,7 +195,7 @@ class AssociateLawyerController extends GetxController {
                 ),
                 IconButton(
                   icon: Icon(Icons.close),
-                  onPressed: () => Get.back(),
+                  onPressed: () => NavigatorService.pop(),
                 ),
               ],
             ),
@@ -292,6 +216,7 @@ class AssociateLawyerController extends GetxController {
   }
 
   Widget _buildAccessLevelSelector() {
+    CaseAccessLevel level = CaseAccessLevel();
     return Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -300,8 +225,8 @@ class AssociateLawyerController extends GetxController {
       ),
       child: Row(
         children: [
-          _buildAccessLevelOption('Read Only', 'read'),
-          _buildAccessLevelOption('Read & Write', 'write'),
+          _buildAccessLevelOption('Read Only', level.read),
+          _buildAccessLevelOption('Read & Write', level.write),
         ],
       ),
     );
@@ -340,7 +265,8 @@ class AssociateLawyerController extends GetxController {
   }
 
   Widget _buildAvailableCasesList() {
-    return Obx(() => ListView.builder(
+    List<CaseModel> casesWithoutAccess = this.casesWithoutAccess;
+    return ListView.builder(
       itemCount: casesWithoutAccess.length,
       itemBuilder: (context, index) {
         final caseItem = casesWithoutAccess[index];
@@ -349,7 +275,7 @@ class AssociateLawyerController extends GetxController {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Color(0xFF1A365D).withOpacity(0.1),
+              color: Color(0xFF1A365D).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.folder_open, color: Color(0xFF1A365D)),
@@ -359,7 +285,7 @@ class AssociateLawyerController extends GetxController {
           trailing: ElevatedButton(
             onPressed: () {
               grantCaseAccess(caseItem, selectedAccessLevel.value);
-              Get.back();
+              NavigatorService.pop();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.buttonBg,
@@ -370,6 +296,6 @@ class AssociateLawyerController extends GetxController {
           ),
         );
       },
-    ));
+    );
   }
 }

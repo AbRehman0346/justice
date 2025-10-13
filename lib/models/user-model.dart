@@ -3,6 +3,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:justice/models/fields/users-fields.dart';
 
 import '../res/navigation_service/NavigatorService.dart';
+import '../temp_data/users-data.dart';
 
 class UserModel {
   static UserModel? _user;
@@ -59,8 +60,12 @@ class UserModel {
     return UserModel(id: "Unknowns", name: "Unknowns", phoneNumber: "###########", email: "@gmail.com", country: "Unknown", city: "Unknown", password: "Unknown");
   }
 
+  factory UserModel.getUserById(String id){
+    return UsersData().getUserById(id) ?? UserModel.dummy();
+  }
 
-  static UserModel get getCurrentUser {
+
+  static UserModel get currentUser {
     if(_user != null) return _user!;
 
 

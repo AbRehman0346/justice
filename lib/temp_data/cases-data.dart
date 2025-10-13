@@ -215,4 +215,13 @@ class CasesData{
       createdAt: DateTime.now(),
     );
   }
+
+  static CaseModel? getCaseById(String id){
+    for (var kase in cases) {
+      if(kase.id == id){
+        return kase;
+      }
+    }
+    return null;
+  }
 }
