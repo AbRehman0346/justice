@@ -8,7 +8,7 @@ import 'package:justice/views/case_screens/create_case/controller-tags.dart';
 import '../../../models/date-model.dart';
 import '../../../res/colors/app-colors.dart';
 import '../../../res/utils/xutils.dart';
-import '../../../temp_data/temp-data.dart';
+import '../../../temp_data/cases-data.dart';
 import '../create_case/link-case-controller.dart';
 import '../../../models/case-model.dart';
 import '../../../models/contact-model.dart';

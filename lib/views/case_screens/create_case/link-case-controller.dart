@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:justice/models/case-model.dart';
 import 'package:justice/res/utils/xutils.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 
 class LinkCaseController extends GetxController{
     TextEditingController txtController = TextEditingController();
     FocusNode focusNode = FocusNode();
-    RxList<CaseModel> cases = TempData.cases.obs;
+    RxList<CaseModel> cases = CasesData.cases.obs;
     RxList<CaseModel> linkedCases = <CaseModel> [].obs;
 
     void onSelected(var value){
@@ -30,7 +30,7 @@ class LinkCaseController extends GetxController{
     CaseModel? getCaseFromId(String id){
       CaseModel? model;
       try{
-        model = TempData.cases.firstWhere((value) => value.id == id);
+        model = CasesData.cases.firstWhere((value) => value.id == id);
       }catch(e){
         XUtils().printSuppressedError(e, "LinkCaseController");
       }

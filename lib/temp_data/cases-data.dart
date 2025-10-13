@@ -1,7 +1,7 @@
 import '../models/case-model.dart';
 import '../models/contact-model.dart';
 import '../models/date-model.dart';
-class TempData{
+class CasesData{
   static late List<CaseModel> cases;
 
   void init(){

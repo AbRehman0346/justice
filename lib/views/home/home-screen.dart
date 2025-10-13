@@ -5,11 +5,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:justice/AppData.dart';
 import 'package:justice/models/date-model.dart';
+import 'package:justice/models/user-model.dart';
 import 'package:justice/res/colors/app-colors.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../../models/case-model.dart';
 import 'home-controller.dart';
 
@@ -71,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Advocate Name',
+                    UserModel.getCurrentUser.name,
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -83,11 +85,18 @@ class HomeScreen extends StatelessWidget {
               //TODO: Remember to Remove this Gesture Detector... It's only for test..
               GestureDetector(
                 onTap: (){
-                  log("==============>  Cases:  ${TempData.cases.length}");
-                  for(var kase in TempData.cases){
-                    log("==============> ${kase.title}");
-                  }
-                  Fluttertoast.showToast(msg: "Cases ${TempData.cases.length}");
+                  log("==================CURRENT USER=========================>");
+
+                  log(UserModel.getCurrentUser.id);
+                  log(UserModel.getCurrentUser.name);
+                  log(UserModel.getCurrentUser.email);
+                  log(UserModel.getCurrentUser.country);
+                  log(UserModel.getCurrentUser.city);
+                  log(UserModel.getCurrentUser.phoneNumber);
+                  log(UserModel.getCurrentUser.password);
+
+                  log("===========================================>");
+                  Fluttertoast.showToast(msg: "Cases ${CasesData.cases.length}");
                 },
                 child: Container(
                   width: 50,

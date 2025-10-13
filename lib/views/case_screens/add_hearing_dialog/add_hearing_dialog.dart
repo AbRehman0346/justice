@@ -418,7 +418,7 @@ class _AddUpcomingHearingDialogState extends State<AddUpcomingHearingDialog> {
     if (dateOnly == today) return 'Today';
     if (dateOnly == tomorrow) return 'Tomorrow';
 
-    return '${date.dayName}, ${date.day} ${date.monthName} ${date.year}';
+    return '${date.shortDayName}, ${date.day} ${date.shortMonthName} ${date.year}';
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -76,5 +76,10 @@ class XUtils{
     log(e.toString());
     log("File: $file");
     log("----------------------------------------------------------------------------------");
+  }
+
+  String getUniqueId(){
+    String uuid = Uuid().v4() + DateTime.now().millisecondsSinceEpoch.toString();
+    return uuid;
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:justice/views/associate_lawyer/detail-screen/associate-lawyer-detail-screen.dart';
+import 'package:justice/views/associate_lawyer/list-screen/associate_lawyers_list.dart';
 import 'package:justice/views/case_screens/hearing_detail/hearing-detail-screen.dart';
+import 'package:justice/views/tabs/tabs.dart';
 import '../../models/case-model.dart';
 import '../../models/contact-model.dart';
 import '../../models/date-model.dart';
@@ -24,7 +27,6 @@ class NavigatorService{
     }
     return result;
   }
-
 
   Future<dynamic> push(Widget view) async {
     return await Navigator.push(GlobalContext.getContext, MaterialPageRoute(builder: (context) => view));
@@ -55,6 +57,13 @@ class NavigatorService{
     bool rmStack = false,
   }) async {
     Widget view = SigninScreen();
+    goto(_GotoModel(view, rmStack));
+  }
+
+  Future<void> gotoDashboard({
+    bool rmStack = false,
+  }) async {
+    Widget view = Tabs();
     goto(_GotoModel(view, rmStack));
   }
 
@@ -106,6 +115,21 @@ class NavigatorService{
     Widget view = AddContactScreen();
     dynamic result = await goto(_GotoModel(view, rmStack));
     return result as ContactModel;
+  }
+
+//   Associate Lawyer Screen
+  Future<void> gotoAssociateLawyer({
+    bool rmStack = false,
+  }) async {
+    Widget view = AssociateLawyersScreen();
+    goto(_GotoModel(view, rmStack));
+  }
+
+  Future<void> gotoAssociateLawyerDetail({
+    bool rmStack = false,
+  }) async {
+    Widget view = AssociateLawyerDetailsScreen();
+    goto(_GotoModel(view, rmStack));
   }
 }
 

@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:justice/models/contact-model.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../../models/case-model.dart';
 
 class HomeController extends GetxController {
@@ -14,7 +14,7 @@ class HomeController extends GetxController {
 
   final List<String> filters = ['All', 'Today', 'Upcoming', 'Disposed Off', 'High Priority'];
 
-  List<CaseModel> cases = TempData.cases;
+  List<CaseModel> cases = CasesData.cases;
 
   List<CaseModel> get filteredCases {
     var caseStatus = CaseStatus();
@@ -94,7 +94,7 @@ class HomeController extends GetxController {
   void refreshCases() async {
     isLoading.value = true;
     await Future.delayed(Duration(seconds: 2));
-    cases = TempData.cases;
+    cases = CasesData.cases;
     isLoading.value = false;
   }
 

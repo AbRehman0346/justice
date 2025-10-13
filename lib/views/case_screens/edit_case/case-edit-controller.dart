@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:justice/res/utils/xutils.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../../../res/navigation_service/NavigatorService.dart';
 import '../create_case/link-case-controller.dart';
 import 'EditScreenControllerTags.dart';
@@ -128,9 +128,9 @@ class CaseEditController extends GetxController {
       linkedCaseId: linkCaseController.linkedCases.isEmpty ? null : linkCaseController.getLinkedCasesIds,
     );
 
-    int index = TempData.cases.indexWhere((value) => value.id == id.value);
+    int index = CasesData.cases.indexWhere((value) => value.id == id.value);
 
-    TempData.cases[index] = updatedCase;
+    CasesData.cases[index] = updatedCase;
 
     XUtils.hideProgressBar();
 

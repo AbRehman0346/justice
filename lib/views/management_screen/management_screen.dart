@@ -176,7 +176,10 @@ class ManagementScreen extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => controller.navigateToRoute(item.route),
+        onTap: (){
+          if(item.onTap == null) return;
+          item.onTap!();
+        },
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,

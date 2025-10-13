@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../create_case/controller-tags.dart';
 import '../create_case/link-case-controller.dart';
 import '../../../models/case-model.dart';
@@ -142,7 +142,7 @@ class AddCaseController extends GetxController {
       linkedCaseId: linkedCasesIds,
     );
 
-    TempData.cases.add(newCase);
+    CasesData.cases.add(newCase);
 
     XUtils.hideProgressBar();
 

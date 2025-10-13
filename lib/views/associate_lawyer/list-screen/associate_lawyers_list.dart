@@ -2,10 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:justice/models/associate_lawyer_model.dart';
+import 'package:justice/res/navigation_service/NavigatorService.dart';
+import '_controller.dart';
 
 class AssociateLawyersScreen extends StatelessWidget {
+
+  late final Controller controller;
+
+  _init(){
+    controller = Get.put(Controller());
+  }
+
   @override
   Widget build(BuildContext context) {
+    _init();
+
+    final associatedCases = controller.getCases;
+
     return Scaffold(
       backgroundColor: Color(0xFFF7FAFC),
       appBar: AppBar(
@@ -31,24 +45,17 @@ class AssociateLawyersScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
-        itemCount: 5,
+        itemCount: associatedCases.length,
         itemBuilder: (context, index) {
-          return _buildAssociateCard(index);
+          return _buildAssociateCard(associatedCases[index]);
         },
       ),
     );
   }
 
-  Widget _buildAssociateCard(int index) {
-    final associates = [
-      {'name': 'Sarah Johnson', 'email': 'sarah@lawfirm.com', 'cases': '12 Active Cases'},
-      {'name': 'Michael Chen', 'email': 'michael@lawfirm.com', 'cases': '8 Active Cases'},
-      {'name': 'Emily Davis', 'email': 'emily@lawfirm.com', 'cases': '15 Active Cases'},
-      {'name': 'Robert Wilson', 'email': 'robert@lawfirm.com', 'cases': '6 Active Cases'},
-      {'name': 'Lisa Martinez', 'email': 'lisa@lawfirm.com', 'cases': '10 Active Cases'},
-    ];
+  Widget _buildAssociateCard(AssociateLawyerModel kase) {
 
-    final associate = associates[index];
+    final associate = controller.getLawyersById(kase.associateLawyerId);
 
     return Container(
       margin: EdgeInsets.only(bottom: 12),
@@ -70,16 +77,16 @@ class AssociateLawyersScreen extends StatelessWidget {
           child: Icon(Icons.person, color: Color(0xFF1A365D)),
         ),
         title: Text(
-          associate['name']!,
+          associate.name,
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(associate['email']!),
+            Text(associate.email),
             SizedBox(height: 4),
             Text(
-              associate['cases']!,
+              kase.caseAccesses.length.toString(),
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: Color(0xFF48BB78),
@@ -90,11 +97,7 @@ class AssociateLawyersScreen extends StatelessWidget {
         ),
         trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFFCBD5E0)),
         onTap: () {
-          Get.snackbar(
-            'Associate Details',
-            'Viewing ${associate['name']} details',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          NavigatorService().gotoAssociateLawyerDetail();
         },
       ),
     );

@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:justice/models/case-model.dart';
 import 'package:justice/res/extensions/datetime-extensions.dart';
 import 'package:justice/res/xwidgets/xtext.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});

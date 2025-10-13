@@ -1,16 +1,27 @@
+import 'dart:developer';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:justice/AppData.dart';
+import 'package:justice/models/user-model.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
+import 'package:justice/res/utils/xutils.dart';
+import 'package:justice/temp_data/users-data.dart';
 
 class SignupController extends GetxController {
-  var isLoading = false.obs;
   var isPasswordVisible = false.obs;
-  var selectedUserType = 'Lawyer'.obs;
-  var selectedCountry = 'United States'.obs;
-  var selectedCity = 'New York'.obs;
+  var selectedCountry = 'Pakistan'.obs;
+  var selectedCity = 'Naushahro Feroz'.obs;
+  final String _uniqueId = XUtils().getUniqueId();
 
-  final List<String> userTypes = ['Lawyer', 'Junior Lawyer'];
+  String name = '';
+  String phoneNumber = '';
+  String email = '';
+  String password = '';
+  String assignedNumber = '';
+
   final Map<String, List<String>> countriesCities = {
+    'Pakistan': ['Naushahro Feroz', 'Lahore', 'Karachi', 'Islamabad'],
     'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston'],
     'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Liverpool'],
     'Canada': ['Toronto', 'Vancouver', 'Montreal', 'Calgary'],
@@ -21,8 +32,20 @@ class SignupController extends GetxController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  void setUserType(String type) {
-    selectedUserType.value = type;
+  void setName(String name) {
+    this.name = name;
+  }
+
+  void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
+
+  void setEmail(String email) {
+    this.email = email;
+  }
+
+  void setPassword(String password) {
+    this.password = password;
   }
 
   void setCountry(String country) {
@@ -34,13 +57,55 @@ class SignupController extends GetxController {
     selectedCity.value = city;
   }
 
+  void setAssignedNumber(String assignedNumber) {
+    this.assignedNumber = assignedNumber;
+  }
+
   Future<void> signUp() async {
-    isLoading.value = true;
+    try{
+      XUtils.showProgressBar();
 
-    // Simulate API call
-    await Future.delayed(Duration(seconds: 2));
+      String id = _uniqueId;
+      String name = this.name;
+      String phoneNumber = this.phoneNumber;
+      String email = this.email;
+      String country = selectedCountry.value;
+      String city = selectedCity.value;
+      String password = this.password;
 
-    isLoading.value = false;
+
+      log("_uniqueId: ${_uniqueId}");
+      log("name: ${this.name}");
+      log("phoneNumber: ${this.phoneNumber}");
+      log("email: ${this.email}");
+      log("value: ${selectedCountry.value}");
+      log("value: ${selectedCity.value}");
+      log("password: ${this.password}");
+
+      // Simulate API call
+      await Future.delayed(Duration(seconds: 2));
+      UserModel user = UserModel(
+        id: id,
+        name: name,
+        phoneNumber: phoneNumber,
+        email: email,
+        country: country,
+        city: city,
+        password: password,
+      );
+
+      UsersData.users.add(user);
+      UserModel.dummy().setCurrentUser = user;
+
+
+      XUtils.hideProgressBar();
+
+      NavigatorService().gotoDashboard();
+    }catch(e){
+      XUtils.hideProgressBar();
+      XUtils().printSuppressedError(e, "Signup Controller");
+      Get.snackbar("Error", e.toString());
+    }
 
     Fluttertoast.showToast(msg: "Functionality still needs development.");
   }

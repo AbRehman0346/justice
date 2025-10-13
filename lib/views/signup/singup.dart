@@ -108,6 +108,7 @@ class SignupScreen extends StatelessWidget {
           icon: Icons.person_outline,
           hintText: 'Full Name',
           prefixIcon: Icons.person,
+          onChanged: (value) => controller.setName(value),
         ),
 
         SizedBox(height: 16),
@@ -117,6 +118,7 @@ class SignupScreen extends StatelessWidget {
           hintText: 'Phone Number',
           prefixIcon: Icons.phone,
           keyboardType: TextInputType.phone,
+          onChanged: (value) => controller.setPhoneNumber(value),
         ),
 
         SizedBox(height: 16),
@@ -126,6 +128,7 @@ class SignupScreen extends StatelessWidget {
           hintText: 'Email Address',
           prefixIcon: Icons.email,
           keyboardType: TextInputType.emailAddress,
+          onChanged: (value) => controller.setEmail(value),
         ),
 
         SizedBox(height: 16),
@@ -135,17 +138,7 @@ class SignupScreen extends StatelessWidget {
           hintText: 'Assigned Number',
           prefixIcon: Icons.numbers,
           keyboardType: TextInputType.number,
-        ),
-
-        SizedBox(height: 16),
-
-        // User Type Dropdown
-        _buildDropdown(
-          value: controller.selectedUserType.value,
-          items: controller.userTypes,
-          hint: 'Select Type',
-          icon: Icons.work_outline,
-          onChanged: controller.setUserType,
+          onChanged: (value) => controller.setAssignedNumber(value),
         ),
 
         SizedBox(height: 16),
@@ -182,6 +175,7 @@ class SignupScreen extends StatelessWidget {
     required IconData icon,
     required String hintText,
     required IconData prefixIcon,
+    Function(String)? onChanged,
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Container(
@@ -206,6 +200,7 @@ class SignupScreen extends StatelessWidget {
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
+        onChanged: onChanged,
       ),
     );
   }
@@ -287,11 +282,11 @@ class SignupScreen extends StatelessWidget {
   }
 
   Widget _buildSignupButton() {
-    return Obx(() => SizedBox(
+    return SizedBox(
       width: double.infinity,
       height: 60,
       child: ElevatedButton(
-        onPressed: controller.isLoading.value ? null : controller.signUp,
+        onPressed: controller.signUp,
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xFF2D3748),
           elevation: 8,
@@ -300,16 +295,7 @@ class SignupScreen extends StatelessWidget {
           ),
           shadowColor: Color(0xFF2D3748).withOpacity(0.3),
         ),
-        child: controller.isLoading.value
-            ? SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation(Colors.white),
-          ),
-        )
-            : Text(
+        child: Text(
           'Create Account',
           style: GoogleFonts.poppins(
             fontSize: 18,
@@ -318,7 +304,7 @@ class SignupScreen extends StatelessWidget {
           ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildLoginLink() {

@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:justice/models/contact-model.dart';
 import 'package:justice/models/date-model.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../models/case-model.dart';
 
@@ -23,7 +23,7 @@ class CalendarController extends GetxController {
   }
 
   // Sample cases data
-  List<CaseModel> get allCases => TempData.cases;
+  List<CaseModel> get allCases => CasesData.cases;
 
   List<CaseModel> get eventsForSelectedDay {
     return allCases.where((caseItem) {

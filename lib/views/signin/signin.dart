@@ -5,7 +5,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'signin-controller.dart';
 
 class SigninScreen extends StatelessWidget {
-  final SigninController controller = Get.put(SigninController());
+  final SignInController controller = Get.put(SignInController());
   final TextEditingController emailPhoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -13,67 +13,69 @@ class SigninScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SizedBox(
-        height: Get.height,
-        child: Stack(
-          children: [
-            // Background Design Elements
-            _buildBackground(),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: Get.height,
+          child: Stack(
+            children: [
+              // Background Design Elements
+              _buildBackground(),
 
-            // Content
-            SafeArea(
-              child: SizedBox(
-                height: Get.height,
-                child: Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Welcome Back Section
-                      _buildWelcomeSection(),
+              // Content
+              SafeArea(
+                child: SizedBox(
+                  height: Get.height,
+                  child: Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        // Welcome Back Section
+                        _buildWelcomeSection(),
 
-                      // upper part, form and signup button.
-                      Column(
-                        children: [
-                          SizedBox(height: 70),
+                        // upper part, form and signup button.
+                        Column(
+                          children: [
+                            SizedBox(height: 70),
 
-                          // Signin Form
-                          _buildSigninForm(),
+                            // Signin Form
+                            _buildSigninForm(),
 
-                          SizedBox(height: 16),
+                            SizedBox(height: 16),
 
-                          // Remember Me & Forgot Password
-                          _buildRememberForgotSection(),
+                            // Remember Me & Forgot Password
+                            _buildRememberForgotSection(),
 
-                          SizedBox(height: 16),
+                            SizedBox(height: 16),
 
-                          // Signin Button
-                          _buildSigninButton(),
-                        ],
-                      ),
-                      // lower part, divier, social logins and signup page button.
-                      Column(
-                        children: [
-                          SizedBox(height: 30),
+                            // Signin Button
+                            _buildSigninButton(),
+                          ],
+                        ),
+                        // lower part, divider, social logins and signup page button.
+                        Column(
+                          children: [
+                            SizedBox(height: 30),
 
-                          // Social Login Options
-                          _buildSocialLogin(),
+                            // Social Login Options
+                            _buildSocialLogin(),
 
-                          SizedBox(height: 30),
+                            SizedBox(height: 30),
 
-                          // Signup Link
-                          _buildSignupLink(),
+                            // Signup Link
+                            _buildSignupLink(),
 
-                          SizedBox(height: 20),
-                        ],
-                      ),
-                    ],
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -280,11 +282,11 @@ class SigninScreen extends StatelessWidget {
   }
 
   Widget _buildSigninButton() {
-    return Obx(() => SizedBox(
+    return SizedBox(
       width: double.infinity,
       height: 60,
       child: ElevatedButton(
-        onPressed: controller.isLoading.value ? null : controller.signIn,
+        onPressed: controller.signIn,
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xFF1A365D),
           elevation: 8,
@@ -293,16 +295,7 @@ class SigninScreen extends StatelessWidget {
           ),
           shadowColor: Color(0xFF1A365D).withOpacity(0.3),
         ),
-        child: controller.isLoading.value
-            ? SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation(Colors.white),
-          ),
-        )
-            : Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -318,7 +311,7 @@ class SigninScreen extends StatelessWidget {
           ],
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildSocialLogin() {
@@ -428,10 +421,9 @@ class SigninScreen extends StatelessWidget {
     );
   }
 
-  // @override
-  // void dispose() {
-  //   emailPhoneController.dispose();
-  //   passwordController.dispose();
-  //   // super.dispose();
-  // }
+  @override
+  void dispose() {
+    emailPhoneController.dispose();
+    passwordController.dispose();
+  }
 }

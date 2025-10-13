@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
-import 'package:justice/temp_data/temp-data.dart';
+import 'package:justice/temp_data/cases-data.dart';
 import '../../../models/case-model.dart';
 import '../../../models/contact-model.dart';
 import '../../../models/date-model.dart';

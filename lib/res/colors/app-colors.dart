@@ -14,4 +14,9 @@ class AppColors{
   static Color secondaryIconColor = Colors.white;
   static Color buttonBg = Color(0xFF1A365D);
   static Color buttonForeground = Colors.white;
+
+
+
+//   Dialog Colors.
+  static Color dialogBg = Colors.white;
 }
