@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "429860229135",
+    "project_id": "justice-ac283",
+    "storage_bucket": "justice-ac283.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429860229135:android:a4326a857bd84dd17e537a",
+        "android_client_info": {
+          "package_name": "com.xcode.justice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH6i4alooYrtAgp8seN72PJvcsg6jyB9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
