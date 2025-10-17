@@ -18,8 +18,6 @@ class AssociateListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     _init();
 
-    final associatedCases = controller.getCases;
-
     return Scaffold(
       backgroundColor: Color(0xFFF7FAFC),
       appBar: AppBar(
@@ -37,13 +35,26 @@ class AssociateListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: associatedCases.length,
-        itemBuilder: (context, index) {
-          return _buildAssociateCard(associatedCases[index]);
-        },
-      ),
+      body: FutureBuilder(future: controller.getCases, builder: (context, AsyncSnapshot snap){
+        if(!snap.hasData){
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if(snap.hasError){
+          return Center(child: Text(snap.error.toString()));
+        }
+
+        List<AssociatedLinksModel> associatedCases = snap.data;
+
+
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: associatedCases.length,
+          itemBuilder: (context, index) {
+            return _buildAssociateCard(associatedCases[index]);
+          },
+        );
+      }),
     );
   }
 

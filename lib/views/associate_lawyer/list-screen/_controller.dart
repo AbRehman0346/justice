@@ -13,8 +13,9 @@ import 'package:justice/views/associate_lawyer/add-associate-lawyer/add_associat
 import '../../../temp_data/associatedCases.dart';
 
 class Controller extends GetxController{
-   List<AssociatedLinksModel> get getCases {
-     return AssociatedCases().getAssociatedCasesByLawyerId(UserModel.currentUser.id);
+   Future<List<AssociatedLinksModel>> get getCases async {
+     final currentUser = await UserModel.currentUser;
+     return AssociatedCases().getAssociatedCasesByLawyerId(currentUser.id);
    }
 
    void showAddLawyerDialog(){

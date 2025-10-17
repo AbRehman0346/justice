@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:justice/models/user-model.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
+import 'package:justice/services/firebase/case/firestore-case.dart';
 import 'package:justice/temp_data/cases-data.dart';
 import '../create_case/controller-tags.dart';
 import '../create_case/link-case-controller.dart';
@@ -119,6 +121,7 @@ class AddCaseController extends GetxController {
 
     LinkCaseController linkCaseController = Get.find<LinkCaseController>(tag: tags.linkCase);
     List<String> linkedCasesIds = linkCaseController.getLinkedCasesIds;
+    UserModel user = await UserModel.currentUser;
 
     final newCase = CaseModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -140,9 +143,10 @@ class AddCaseController extends GetxController {
       caseType: caseType.value,
       caseNumber: caseNumber.value.isEmpty ? null : caseNumber.value,
       linkedCaseId: linkedCasesIds,
+      ownerId: user.id,
     );
 
-    CasesData.cases.add(newCase);
+    await FirestoreCase().createCase(newCase);
 
     XUtils.hideProgressBar();
 

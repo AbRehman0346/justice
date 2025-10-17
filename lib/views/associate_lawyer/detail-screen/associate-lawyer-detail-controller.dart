@@ -36,12 +36,14 @@ class AssociateLawyerController extends GetxController {
     selectedAccessLevel.value = level;
   }
 
-  void grantCaseAccess(CaseModel caseItem, String accessLevel) {
+  Future<void> grantCaseAccess(CaseModel caseItem, String accessLevel) async {
+    final currentUser = await UserModel.currentUser;
+
     final newAccess = CaseAccess(
       caseId: caseItem.id,
       accessLevel: accessLevel,
       grantedAt: DateTime.now(),
-      grantedBy: UserModel.currentUser.id,
+      grantedBy: currentUser.id,
     );
     log("Created New Case");
 

@@ -219,6 +219,7 @@ class SignupScreen extends StatelessWidget {
         ],
       ),
       child: TextField(
+        controller: controller.passwordController.value,
         obscureText: !controller.isPasswordVisible.value,
         style: GoogleFonts.poppins(fontSize: 16),
         decoration: InputDecoration(

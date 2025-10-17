@@ -57,10 +57,12 @@ class AddAssociateController extends GetxController {
     searchError.value = '';
   }
 
-  AssociatedLinksModel createAssociatedLink() {
+  Future<AssociatedLinksModel> createAssociatedLink() async {
+    var currentUser = await UserModel.currentUser;
+
     return AssociatedLinksModel(
       id: _uniqueId,
-      lawyerId: UserModel.currentUser.id,
+      lawyerId: currentUser.id,
       associateLawyerId: foundUser.value!.id,
       role: selectedRole.value,
       joinedDate: DateTime.now(),

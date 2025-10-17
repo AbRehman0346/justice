@@ -11,6 +11,7 @@ import 'package:justice/models/user-model.dart';
 import 'package:justice/res/colors/app-colors.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
 import 'package:justice/res/utils/xutils.dart';
+import 'package:justice/res/xwidgets/xtext.dart';
 import 'package:justice/temp_data/cases-data.dart';
 import '../../models/case-model.dart';
 import 'home-controller.dart';
@@ -72,28 +73,46 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
-                  Text(
-                    UserModel.currentUser.name,
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  FutureBuilder(future: UserModel.currentUser,
+                      builder: (context, AsyncSnapshot snap){
+                          Widget widget(String str){
+                            return Text(
+                              str,
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            );
+                          }
+
+                          if(!snap.hasData){
+                            return widget("Loading...");
+                          }
+
+                          if(snap.hasError){
+                            return widget("Error");
+                          }
+
+                          return widget(snap.data.name);
+                      },
                   ),
                 ],
               ),
               //TODO: Remember to Remove this Gesture Detector... It's only for test..
               GestureDetector(
-                onTap: (){
+                onTap: () async {
                   log("==================CURRENT USER=========================>");
 
-                  log(UserModel.currentUser.id);
-                  log(UserModel.currentUser.name);
-                  log(UserModel.currentUser.email);
-                  log(UserModel.currentUser.country);
-                  log(UserModel.currentUser.city);
-                  log(UserModel.currentUser.phoneNumber);
-                  log(UserModel.currentUser.password);
+                  var currentUser = await UserModel.currentUser;
+
+                  log(currentUser.id);
+                  log(currentUser.name);
+                  log(currentUser.email);
+                  log(currentUser.country);
+                  log(currentUser.city);
+                  log(currentUser.phoneNumber);
+                  log(currentUser.password);
 
                   log("===========================================>");
                   Fluttertoast.showToast(msg: "Cases ${CasesData.cases.length}");

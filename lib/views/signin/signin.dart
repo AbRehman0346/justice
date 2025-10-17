@@ -4,10 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'signin-controller.dart';
 
-class SigninScreen extends StatelessWidget {
+class SignInScreen extends StatelessWidget {
   final SignInController controller = Get.put(SignInController());
   final TextEditingController emailPhoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

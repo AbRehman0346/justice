@@ -322,11 +322,12 @@ class AddAssociateDialog extends StatelessWidget {
     );
   }
 
-  void _addAssociate() {
+  void _addAssociate() async {
     try{
-      final associatedLink = controller.createAssociatedLink();
+      final associatedLink = await controller.createAssociatedLink();
+      final currentUser = await UserModel.currentUser;
 
-      if(associatedLink.associateLawyerId == UserModel.currentUser.id){
+      if(associatedLink.associateLawyerId == currentUser.id){
         throw Exception("You can't add yourself as an associate lawyer");
       }
 

@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 
+import '../../services/firebase/auth/auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:justice/AppData.dart';
@@ -12,12 +14,12 @@ class SignupController extends GetxController {
   var isPasswordVisible = false.obs;
   var selectedCountry = 'Pakistan'.obs;
   var selectedCity = 'Naushahro Feroz'.obs;
+  Rx<TextEditingController> passwordController = TextEditingController().obs;
   final String _uniqueId = XUtils().getUniqueId();
 
   String name = '';
   String phoneNumber = '';
   String email = '';
-  String password = '';
   String assignedNumber = '';
 
   final Map<String, List<String>> countriesCities = {
@@ -44,10 +46,6 @@ class SignupController extends GetxController {
     this.email = email;
   }
 
-  void setPassword(String password) {
-    this.password = password;
-  }
-
   void setCountry(String country) {
     selectedCountry.value = country;
     selectedCity.value = countriesCities[country]?.first ?? '';
@@ -71,19 +69,19 @@ class SignupController extends GetxController {
       String email = this.email;
       String country = selectedCountry.value;
       String city = selectedCity.value;
-      String password = this.password;
+      String password = passwordController.value.text;
 
 
-      log("_uniqueId: ${_uniqueId}");
-      log("name: ${this.name}");
-      log("phoneNumber: ${this.phoneNumber}");
-      log("email: ${this.email}");
-      log("value: ${selectedCountry.value}");
-      log("value: ${selectedCity.value}");
-      log("password: ${this.password}");
+      log("_uniqueId: $_uniqueId");
+      log("name: $name");
+      log("phoneNumber: $phoneNumber");
+      log("email: $email");
+      log("Country: $country");
+      log("value: $city");
+      log("password: $password");
 
       // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
+      // await Future.delayed(Duration(seconds: 2));
       UserModel user = UserModel(
         id: id,
         name: name,
@@ -94,20 +92,16 @@ class SignupController extends GetxController {
         password: password,
       );
 
-      UsersData.users.add(user);
+      await Auth().createUserAccount(user);
       UserModel.dummy().setCurrentUser = user;
 
-
       XUtils.hideProgressBar();
-
       NavigatorService().gotoDashboard();
     }catch(e){
       XUtils.hideProgressBar();
       XUtils().printSuppressedError(e, "Signup Controller");
       Get.snackbar("Error", e.toString());
     }
-
-    Fluttertoast.showToast(msg: "Functionality still needs development.");
   }
 
   void pop(){

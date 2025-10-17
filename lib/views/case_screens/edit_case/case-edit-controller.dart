@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:justice/models/user-model.dart';
 import 'package:justice/res/utils/xutils.dart';
 import 'package:justice/temp_data/cases-data.dart';
 import '../../../res/navigation_service/NavigatorService.dart';
@@ -111,6 +113,8 @@ class CaseEditController extends GetxController {
     // Simulate API call
     await Future.delayed(Duration(seconds: 2));
 
+    UserModel user = await UserModel.currentUser;
+
     final updatedCase = CaseModel(
       id: id.value,
       title: title.value,
@@ -126,6 +130,7 @@ class CaseEditController extends GetxController {
       clientIds: selectedClients.isEmpty ? null : selectedClients,
       caseNumber: caseNumber.value.isEmpty ? null : caseNumber.value,
       linkedCaseId: linkCaseController.linkedCases.isEmpty ? null : linkCaseController.getLinkedCasesIds,
+      ownerId: user.id,
     );
 
     int index = CasesData.cases.indexWhere((value) => value.id == id.value);

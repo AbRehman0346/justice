@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:justice/temp_data/cases-data.dart';
-import 'package:justice/test-screen.dart';
-import 'package:justice/views/associate_lawyer/list-screen/associate_lawyers_list.dart';
-import 'package:justice/views/management_screen/management_screen.dart';
 import 'package:justice/views/signin/signin.dart';
-import './views/tabs/tabs.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SigninScreen(),
+      home: SignInScreen(),
     );
   }
 }

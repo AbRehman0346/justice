@@ -1,4 +1,12 @@
+import 'dart:developer';
 import 'package:get/get.dart';
+
+class CaseHearingDateFields{
+  final String prevDate = "prevDate";
+  final String upcomingDate = "upcomingDate";
+  final String dateStatus = "dateStatus";
+  final String dateNotes = "dateNotes";
+}
 
 class CaseHearingsDateModel{
   List<PrevHearingDateModel> prevDate;
@@ -19,6 +27,33 @@ class CaseHearingsDateModel{
     }
     return prevDate[prevDate.length - 1];
   }
+
+  void print(){
+    log("Upcoming Date: $upcomingDate");
+    log("Date Status: $dateStatus");
+    log("Date Notes: $dateNotes");
+
+    log("Prev Dates: ");
+    for(var date in prevDate){
+      date.print();
+    }
+  }
+
+  Map<String, dynamic> toMap(){
+    var f = CaseHearingDateFields();
+    return {
+      f.prevDate: prevDate.map((e) => e.toMap()).toList(),
+      f.upcomingDate: upcomingDate?.toIso8601String(),
+      f.dateStatus: dateStatus,
+      f.dateNotes: dateNotes,
+    };
+  }
+}
+
+class PrevHearingDateFields{
+  final String date = "date";
+  final String dateStatus = "dateStatus";
+  final String dateNotes = "dateNotes";
 }
 
 class PrevHearingDateModel{
@@ -31,6 +66,21 @@ class PrevHearingDateModel{
     required this.dateStatus,
     this.dateNotes,
   });
+
+  void print(){
+    log("Date: $date");
+    log("Date Status: $dateStatus");
+    log("Date Notes: $dateNotes");
+  }
+
+  Map<String, dynamic> toMap(){
+    var f = PrevHearingDateFields();
+    return {
+      f.date: date.toIso8601String(),
+      f.dateStatus: dateStatus,
+      f.dateNotes: dateNotes,
+    };
+  }
 }
 
 class HearingStatus{

@@ -57,7 +57,7 @@ class NavigatorService{
   Future<void> gotoSignIn({
     bool rmStack = false,
   }) async {
-    Widget view = SigninScreen();
+    Widget view = SignInScreen();
     goto(_GotoModel(view, rmStack));
   }
 

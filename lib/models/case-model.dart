@@ -1,5 +1,25 @@
+import 'dart:developer';
 import 'package:justice/models/contact-model.dart';
 import 'package:justice/models/date-model.dart';
+
+
+class CaseModelFields{
+  final String id = "id";
+  final String title = "title";
+  final String court = "court";
+  final String city = "city";
+  final String proceedingsDetails = "proceedingsDetails";
+  final String caseStage = "caseStage";
+  final String caseType = "caseType";
+  final String linkedCaseId = "linkedCaseId";
+  final String clientIds = "clients";
+  final String createdAt = "createdAt";
+  final String date = "date";
+  final String caseNumber = "caseNumber";
+  final String status = "status";
+  final String priority = "priority";
+  final String ownerId = "ownerId";
+}
 
 class CaseModel {
   final String id;
@@ -16,6 +36,7 @@ class CaseModel {
   final String? caseNumber;
   final String status;
   final String priority;
+  final String ownerId;
 
   bool _isDummy = false;
 
@@ -29,6 +50,7 @@ class CaseModel {
     required this.proceedingsDetails,
     required this.caseStage,
     required this.createdAt,
+    required this.ownerId,
     this.date,
     this.clientIds,
     this.caseType,
@@ -46,6 +68,7 @@ class CaseModel {
     String priority = "Unknown",
     String proceedingsDetails = "Unknown",
     String caseStage = "Unknown",
+    String ownerId = "Unknown",
     DateTime? createdAt,
 }
       ){
@@ -62,6 +85,7 @@ class CaseModel {
         proceedingsDetails: proceedingsDetails,
         caseStage: caseStage,
         createdAt: dateTime,
+        ownerId: ownerId,
     );
 
     object._isDummy = true;
@@ -70,6 +94,52 @@ class CaseModel {
 
   bool get isDummy => _isDummy;
   bool get isNotDummy => !_isDummy;
+
+  void print(){
+    log("id: $id");
+    log("title: $title");
+    log("court: $court");
+    log("city: $city");
+    log("proceedingsDetails: $proceedingsDetails");
+    log("caseStage: $caseStage");
+    log("caseType: $caseType");
+    log("linkedCaseId: $linkedCaseId");
+    log("createdAt: $createdAt");
+    log("caseNumber: $caseNumber");
+    log("status: $status");
+    log("priority: $priority");
+    log("ownerId: $ownerId");
+
+    log("\nDate: ");
+    date?.print();
+
+    log("\nclientIds: ");
+    for (ContactModel client in clientIds ?? []){
+        client.print();
+    }
+  }
+
+
+  Map<String, dynamic> toMap() {
+    var f = CaseModelFields();
+    return {
+      f.id: id,
+      f.title: title,
+      f.court: court,
+      f.city: city,
+      f.proceedingsDetails: proceedingsDetails,
+      f.caseStage: caseStage,
+      f.caseType: caseType,
+      f.linkedCaseId: linkedCaseId,
+      f.clientIds: clientIds?.map((e) => e.toMap()).toList(),
+      f.createdAt: createdAt.toIso8601String(),
+      f.date: date?.toMap(),
+      f.caseNumber: caseNumber,
+      f.status: status,
+      f.priority: priority,
+      f.ownerId: ownerId,
+    };
+  }
 }
 
 class CasePriority{
