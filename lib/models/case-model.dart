@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:justice/models/contact-model.dart';
 import 'package:justice/models/date-model.dart';
+import 'package:justice/res/extensions/llist-extension.dart';
 
 
 class CaseModelFields{
@@ -90,6 +92,30 @@ class CaseModel {
 
     object._isDummy = true;
     return object;
+  }
+
+  factory CaseModel.fromDocument(DocumentSnapshot doc){
+    final data = doc.data() as Map<String, dynamic>;
+    final f = CaseModelFields();
+
+    final caseModel = CaseModel(
+      id: data[f.id],
+      title: data[f.title],
+      date: data[f.date] != null ? CaseHearingsDateModel.fromMap(data[f.date]) : null,
+      linkedCaseId: (data[f.linkedCaseId] as List).toListString,
+      caseNumber: data[f.caseNumber],
+      caseType: data[f.caseType],
+      court: data[f.court],
+      city: data[f.city],
+      status: data[f.status],
+      priority: data[f.priority],
+      proceedingsDetails: data[f.proceedingsDetails],
+      caseStage: data[f.caseStage],
+      createdAt: DateTime.parse(data[f.createdAt]),
+      ownerId: data[f.ownerId],
+    );
+
+    return caseModel;
   }
 
   bool get isDummy => _isDummy;

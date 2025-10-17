@@ -48,6 +48,23 @@ class CaseHearingsDateModel{
       f.dateNotes: dateNotes,
     };
   }
+
+  factory CaseHearingsDateModel.fromMap(Map<String, dynamic> map){
+    var f = CaseHearingDateFields();
+    List<PrevHearingDateModel> prevDates = [];
+
+    if(map[f.prevDate] != null){
+      prevDates = (map[f.prevDate] as List).map((e) => PrevHearingDateModel.fromMap(e)).toList();
+    }
+
+
+    return CaseHearingsDateModel(
+      prevDate: prevDates,
+      upcomingDate: DateTime.tryParse(map[f.upcomingDate]),
+      dateStatus: map[f.dateStatus],
+      dateNotes: map[f.dateNotes],
+    );
+  }
 }
 
 class PrevHearingDateFields{
@@ -80,6 +97,15 @@ class PrevHearingDateModel{
       f.dateStatus: dateStatus,
       f.dateNotes: dateNotes,
     };
+  }
+
+  factory PrevHearingDateModel.fromMap(Map<String, dynamic> map){
+    var f = PrevHearingDateFields();
+    return PrevHearingDateModel(
+      date: DateTime.parse(map[f.date]),
+      dateStatus: map[f.dateStatus],
+      dateNotes: map[f.dateNotes],
+    );
   }
 }
 

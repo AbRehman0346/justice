@@ -14,6 +14,7 @@ import 'package:justice/res/utils/xutils.dart';
 import 'package:justice/res/xwidgets/xtext.dart';
 import 'package:justice/temp_data/cases-data.dart';
 import '../../models/case-model.dart';
+import '../../services/firebase/case/firestore-case.dart';
 import 'home-controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -102,17 +103,14 @@ class HomeScreen extends StatelessWidget {
               //TODO: Remember to Remove this Gesture Detector... It's only for test..
               GestureDetector(
                 onTap: () async {
-                  log("==================CURRENT USER=========================>");
+                  log("==================CASES=========================>");
 
-                  var currentUser = await UserModel.currentUser;
+                  var cases = await FirestoreCase().getCases();
 
-                  log(currentUser.id);
-                  log(currentUser.name);
-                  log(currentUser.email);
-                  log(currentUser.country);
-                  log(currentUser.city);
-                  log(currentUser.phoneNumber);
-                  log(currentUser.password);
+                  for (var kase in cases){
+                    kase.print();
+                    log("===========================================>\n\n");
+                  }
 
                   log("===========================================>");
                   Fluttertoast.showToast(msg: "Cases ${CasesData.cases.length}");
@@ -138,78 +136,6 @@ class HomeScreen extends StatelessWidget {
 
           // Stats Cards
           // _buildStatsCards(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatsCards() {
-    final status = HearingStatus();
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            value: controller.cases.length.toString(),
-            label: 'Total Cases',
-            icon: Icons.folder_open_rounded,
-            color: Color(0xFF48BB78),
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: _buildStatCard(
-            value: controller.cases.where((c) => c.status == status.upcoming).length.toString(),
-            label: "Upcoming",
-            icon: Icons.calendar_today_rounded,
-            color: Color(0xFFED8936),
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: _buildStatCard(
-            value: controller.cases.where((c) => c.priority == CasePriority().high).length.toString(),
-            label: 'High Priority',
-            icon: Icons.warning_amber_rounded,
-            color: Color(0xFFF56565),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard({
-        required String value,
-        required String label,
-        required IconData icon,
-        required Color color
-      }) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.white, size: 20),
-          SizedBox(height: 5),
-          Text(
-            value,
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 10,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-            textAlign: TextAlign.center,
-          ),
         ],
       ),
     );
@@ -283,30 +209,42 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCasesList() {
     return Expanded(
-      child: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
+      child: Obx(() => FutureBuilder(
+          key: controller.dataKey.value,
+          future: controller.filteredCases,
+          builder: (context, AsyncSnapshot snap) {
+            if (!snap.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-        if (controller.filteredCases.isEmpty) {
-          return _buildEmptyState();
-        }
+            if (snap.hasError) {
+              return Center(child: Text('Error: ${snap.error}'));
+            }
 
-        return RefreshIndicator(
-          onRefresh: () async => controller.refreshCases(),
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            itemCount: controller.filteredCases.length + 1,
-            itemBuilder: (context, index) {
-              if(index == controller.filteredCases.length){
-                return XUtils.height(80);
-              }
-              final caseItem = controller.filteredCases[index];
-              return _buildCaseCard(caseItem);
-            },
-          ),
-        );
-      }),
+            List<CaseModel> cases = snap.data as List<CaseModel>;
+
+
+            if (cases.isEmpty) {
+              return _buildEmptyState();
+            }
+
+
+            return RefreshIndicator(
+              onRefresh: () async => controller.refreshCases(),
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                itemCount: cases.length + 1,
+                itemBuilder: (context, index) {
+                  if(index == cases.length){
+                    return XUtils.height(80);
+                  }
+                  final caseItem = cases[index];
+                  return _buildCaseCard(caseItem);
+                },
+              ),
+            );
+          }
+      )),
     );
   }
 
@@ -329,7 +267,6 @@ class HomeScreen extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            log("===========title: ${caseItem.title}");
             controller.gotoDetailScreen(caseItem);
           },
           child: Padding(
@@ -369,8 +306,7 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.person_rounded,
                   text: caseItem.clientIds == null ? "No Client Added" :
                     caseItem.clientIds!.isEmpty ? "No Client Added" :
-                        caseItem.clientIds!.first.name
-                  ,
+                        caseItem.clientIds!.first.name,
                 ),
 
                 _buildCaseDetailRow(

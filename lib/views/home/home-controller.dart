@@ -1,12 +1,14 @@
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:justice/models/contact-model.dart';
 import 'package:justice/res/navigation_service/NavigatorService.dart';
+import 'package:justice/services/firebase/case/firestore-case.dart';
 import 'package:justice/temp_data/cases-data.dart';
 import '../../models/case-model.dart';
 
 class HomeController extends GetxController {
-  var isLoading = false.obs;
+  Rx<Key> dataKey = UniqueKey().obs;
   var selectedFilter = 'All'.obs;
   var searchQuery = ''.obs;
   var currentDate = DateTime.now().obs;
@@ -14,21 +16,23 @@ class HomeController extends GetxController {
 
   final List<String> filters = ['All', 'Today', 'Upcoming', 'Disposed Off', 'High Priority'];
 
-  List<CaseModel> cases = CasesData.cases;
+  Future<List<CaseModel>> get _cases async => await FirestoreCase().getCases();
 
-  List<CaseModel> get filteredCases {
+
+  Future<List<CaseModel>> get filteredCases async {
     var caseStatus = CaseStatus();
     var dateTime = DateTime.now();
+    var cases = await _cases;
     var filtered = cases.where((CaseModel caseItem) {
       final matchesSearch = caseItem.title.toLowerCase().contains(searchQuery.toLowerCase());
-      if(selectedFilter.value == filters[0]){
-        // All Filter -> It shows all the active cases..
-        return caseItem.status == caseStatus.active;
-      }
 
       bool matchesFilter = true;
 
-      if(selectedFilter.value == filters[1]){
+      if(selectedFilter.value == filters[0]){
+        // All Filter ==> Selects all the active cases only..
+        matchesFilter = caseItem.status == caseStatus.active;
+      }
+      else if(selectedFilter.value == filters[1]){
         // Today Filter
         if(caseItem.date != null && caseItem.date!.upcomingDate != null){
           matchesFilter = caseItem.date!.upcomingDate!.day == dateTime.day &&
@@ -50,11 +54,11 @@ class HomeController extends GetxController {
       } else if(selectedFilter.value == filters[3]){
         // Completed Filter
         matchesFilter = caseItem.status == caseStatus.disposeOff;
-      } else if(selectedFilter.value == filters[4]){
+      }
+      else if(selectedFilter.value == filters[4]){
         // High Priority...
         matchesFilter = caseItem.priority == CasePriority().high && caseItem.status == caseStatus.active;
       }
-
       return matchesSearch && matchesFilter;
     }).toList();
 
@@ -74,10 +78,12 @@ class HomeController extends GetxController {
 
   void setFilter(String filter) {
     selectedFilter.value = filter;
+    refreshCases();
   }
 
   void searchCases(String query) {
     searchQuery.value = query;
+    refreshCases();
   }
 
   String formatDate(DateTime date) {
@@ -91,11 +97,8 @@ class HomeController extends GetxController {
     return 'Good Evening';
   }
 
-  void refreshCases() async {
-    isLoading.value = true;
-    await Future.delayed(Duration(seconds: 2));
-    cases = CasesData.cases;
-    isLoading.value = false;
+  Future<void> refreshCases() async {
+    dataKey.update((key) => dataKey.value = UniqueKey());
   }
 
   void gotoAddCase(){
