@@ -464,11 +464,12 @@ class CaseEditScreen extends StatelessWidget {
                 textEditingController: linkCaseController.txtController,
                 focusNode: linkCaseController.focusNode,
                 onSelected: linkCaseController.onSelected,
-                optionsBuilder: (value){
+                optionsBuilder: (value) async {
                   if (value.text == '') {
                     return const Iterable<String>.empty();
                   }
-                  return linkCaseController.cases.where((CaseModel option) {
+                  var cases = await linkCaseController.cases;
+                  return cases.where((CaseModel option) {
                     return option.title.toLowerCase().contains(value.text.toLowerCase());
                   });
                 },

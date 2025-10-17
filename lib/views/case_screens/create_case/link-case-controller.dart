@@ -4,13 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:justice/models/case-model.dart';
 import 'package:justice/res/utils/xutils.dart';
+import 'package:justice/services/firebase/case/firestore-case.dart';
 import 'package:justice/temp_data/cases-data.dart';
 
 class LinkCaseController extends GetxController{
     TextEditingController txtController = TextEditingController();
     FocusNode focusNode = FocusNode();
-    RxList<CaseModel> cases = CasesData.cases.obs;
     RxList<CaseModel> linkedCases = <CaseModel> [].obs;
+
+
+    Future<RxList<CaseModel>> get cases async {
+      var cases = await FirestoreCase().getCases();
+      return cases.obs;
+    }
 
     void onSelected(var value){
       txtController.text = "";
@@ -25,7 +31,7 @@ class LinkCaseController extends GetxController{
       linkedCases.remove(kase);
     }
 
-    List<String> get getLinkedCasesIds => linkedCases.map((value) => value.title).toList();
+    List<String> get getLinkedCasesIds => linkedCases.map((value) => value.id).toList();
 
     CaseModel? getCaseFromId(String id){
       CaseModel? model;
