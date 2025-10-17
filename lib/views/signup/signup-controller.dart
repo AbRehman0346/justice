@@ -70,15 +70,7 @@ class SignupController extends GetxController {
       String country = selectedCountry.value;
       String city = selectedCity.value;
       String password = passwordController.value.text;
-
-
-      log("_uniqueId: $_uniqueId");
-      log("name: $name");
-      log("phoneNumber: $phoneNumber");
-      log("email: $email");
-      log("Country: $country");
-      log("value: $city");
-      log("password: $password");
+      String assignedNumber = this.assignedNumber;
 
       // Simulate API call
       // await Future.delayed(Duration(seconds: 2));
@@ -90,7 +82,9 @@ class SignupController extends GetxController {
         country: country,
         city: city,
         password: password,
+        assignedNumber: assignedNumber,
       );
+
 
       await Auth().createUserAccount(user);
       UserModel.dummy().setCurrentUser = user;

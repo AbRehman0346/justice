@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -14,7 +16,7 @@ class UserModel {
   final String name;
   final String phoneNumber;
   final String email;
-  final String? assignedNumber; // optional
+  final String? assignedNumber;
   final String country;
   final String city;
   final String password;
@@ -106,6 +108,17 @@ class UserModel {
 
   set setCurrentUser(UserModel value) {
     _user = value;
+  }
+
+  void print(){
+    log("id $id");
+    log("name $name");
+    log("phoneNumber $phoneNumber");
+    log("email $email");
+    log( "assignedNumber $assignedNumber");
+    log("country $country");
+    log("city $city");
+    log("password $password");
   }
 
   Map<String, dynamic> toMap(){
